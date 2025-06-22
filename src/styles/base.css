@@ -1,0 +1,69 @@
+.media {
+    overflow: hidden;
+    position: relative;
+}
+
+.img-fit {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.img-fit--contain {
+    object-fit: contain;
+}
+
+.img-fit--group-zoom,
+.img-fit--zoom {
+    transition: transform var(--duration-slow) var(--easing);
+}
+
+@media (hover: hover) {
+    .group:hover .img-fit--group-zoom,
+    .img-fit--zoom:hover {
+        transform: scale(1.05);
+    }
+}
+
+.js-hidden {
+    display: none;
+}
+
+/* Swiper pagination dots */
+.swiper-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    position: static !important;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(4px);
+    width: fit-content;
+    margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+    .swiper-pagination {
+        display: none;
+    }
+}
+
+.swiper-pagination-bullet {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 1 !important;
+    margin: 0 !important;
+    background: rgba(0, 0, 0, 0.3) !important;
+}
+
+.swiper-pagination-bullet-active {
+    background: rgba(0, 0, 0, 0.8) !important;
+}
