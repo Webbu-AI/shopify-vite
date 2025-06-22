@@ -1,0 +1,1 @@
+-   [x] Make variant images in image gallery change w variant change
