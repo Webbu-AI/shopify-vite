@@ -1,0 +1,89 @@
+{%- liquid
+  assign show_breadcrumbs = true
+
+  if template.name == 'index' and section.settings.show_on_homepage == false
+    assign show_breadcrumbs = false
+  endif
+-%}
+
+{%- if show_breadcrumbs -%}
+  <nav class="page-width py-3 text-sm" aria-label="Breadcrumbs">
+    <ol class="flex flex-wrap items-center gap-2 text-gray-600">
+      <li>
+        <a href="{{ routes.root_url }}" class="hover:opacity-70 no-decoration">
+          {{ 'general.breadcrumbs.home' | t | default: 'Home' }}
+        </a>
+      </li>
+
+      {%- case template.name -%}
+        {%- when 'product' -%}
+          {%- if collection -%}
+            <li class="flex items-center gap-2">
+              {% render 'icon', icon: 'chevron-right-small', class: 'size-3 text-gray-400' %}
+              <a href="{{ collection.url }}" class="hover:opacity-70 no-decoration">{{ collection.title }}</a>
+            </li>
+          {%- endif -%}
+          <li class="flex items-center gap-2" aria-current="page">
+            {% render 'icon', icon: 'chevron-right-small', class: 'size-3 text-gray-400' %}
+            <span class="text-[var(--color-text)]">{{ product.title }}</span>
+          </li>
+
+        {%- when 'collection' -%}
+          <li class="flex items-center gap-2" aria-current="page">
+            {% render 'icon', icon: 'chevron-right-small', class: 'size-3 text-gray-400' %}
+            <span class="text-[var(--color-text)]">{{ collection.title }}</span>
+          </li>
+
+        {%- when 'article' -%}
+          {%- if blog -%}
+            <li class="flex items-center gap-2">
+              {% render 'icon', icon: 'chevron-right-small', class: 'size-3 text-gray-400' %}
+              <a href="{{ blog.url }}" class="hover:opacity-70 no-decoration">{{ blog.title }}</a>
+            </li>
+          {%- endif -%}
+          <li class="flex items-center gap-2" aria-current="page">
+            {% render 'icon', icon: 'chevron-right-small', class: 'size-3 text-gray-400' %}
+            <span class="text-[var(--color-text)]">{{ article.title }}</span>
+          </li>
+
+        {%- when 'blog' -%}
+          <li class="flex items-center gap-2" aria-current="page">
+            {% render 'icon', icon: 'chevron-right-small', class: 'size-3 text-gray-400' %}
+            <span class="text-[var(--color-text)]">{{ blog.title }}</span>
+          </li>
+
+        {%- when 'page' -%}
+          <li class="flex items-center gap-2" aria-current="page">
+            {% render 'icon', icon: 'chevron-right-small', class: 'size-3 text-gray-400' %}
+            <span class="text-[var(--color-text)]">{{ page.title }}</span>
+          </li>
+
+        {%- when 'search' -%}
+          <li class="flex items-center gap-2" aria-current="page">
+            {% render 'icon', icon: 'chevron-right-small', class: 'size-3 text-gray-400' %}
+            <span class="text-[var(--color-text)]">{{ 'general.search.search' | t | default: 'Search' }}</span>
+          </li>
+      {%- endcase -%}
+    </ol>
+  </nav>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Breadcrumbs",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_on_homepage",
+      "label": "Show on homepage",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Breadcrumbs"
+    }
+  ]
+}
+{% endschema %}

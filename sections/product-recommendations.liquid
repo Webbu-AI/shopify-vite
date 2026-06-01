@@ -1,0 +1,231 @@
+{%- liquid
+  assign product_id = product.id
+  assign limit = section.settings.limit
+  assign intent = section.settings.intent
+-%}
+
+<product-recommendations
+  class="block"
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product_id }}&limit={{ limit }}&intent={{ intent }}"
+  data-product-id="{{ product_id }}"
+>
+  {%- if recommendations.performed and recommendations.products_count > 0 -%}
+    <div class="section-spacing page-width">
+      {%- if section.settings.heading != blank -%}
+        {% liquid
+          assign heading_tag = section.settings.heading_tag
+          assign heading_size_mobile = section.settings.heading_size_mobile
+          assign heading_size_desktop = section.settings.heading_size_desktop
+          assign heading_weight = section.settings.heading_weight
+          assign heading_align_mobile = section.settings.heading_align_mobile
+          assign heading_align_desktop = section.settings.heading_align_desktop
+        %}
+        <{{ heading_tag }} class="{{ heading_size_mobile }} {{ heading_size_desktop }} {{ heading_weight }} {{ heading_align_mobile }} {{ heading_align_desktop }} mb-6">
+          {{ section.settings.heading | escape }}
+        </{{ heading_tag }}>
+      {%- endif -%}
+
+      {% liquid
+        assign grid_cols_mobile = section.settings.grid_cols_mobile
+        assign grid_cols_desktop = section.settings.grid_cols_desktop
+        assign grid_gap = section.settings.grid_gap
+      %}
+      <div class="grid {{ grid_cols_mobile }} {{ grid_cols_desktop }} {{ grid_gap }}">
+        {%- for product in recommendations.products -%}
+          {% render 'product-card', product: product %}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+</product-recommendations>
+
+{% schema %}
+{
+  "name": "Related products",
+  "tag": "section",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Dynamic recommendations use order and product information to change and improve over time. They can be modified with Search & Discovery app [Learn more](https://help.shopify.com/en/themes/development/recommended-products)"
+    },
+    {
+      "type": "header",
+      "content": "Section header"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Related products"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading Tag",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" },
+        { "value": "div", "label": "Div" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "select",
+      "id": "heading_size_mobile",
+      "label": "Heading Size (Mobile)",
+      "options": [
+        { "value": "text-xs", "label": "Extra Small" },
+        { "value": "text-sm", "label": "Small" },
+        { "value": "text-base", "label": "Base" },
+        { "value": "text-lg", "label": "Large" },
+        { "value": "text-xl", "label": "Extra Large" },
+        { "value": "text-2xl", "label": "2X Large" },
+        { "value": "text-3xl", "label": "3X Large" },
+        { "value": "text-4xl", "label": "4X Large" },
+        { "value": "text-5xl", "label": "5X Large" },
+        { "value": "text-6xl", "label": "6X Large" }
+      ],
+      "default": "text-2xl"
+    },
+    {
+      "type": "select",
+      "id": "heading_size_desktop",
+      "label": "Heading Size (Desktop)",
+      "options": [
+        { "value": "md:text-xs", "label": "Extra Small" },
+        { "value": "md:text-sm", "label": "Small" },
+        { "value": "md:text-base", "label": "Base" },
+        { "value": "md:text-lg", "label": "Large" },
+        { "value": "md:text-xl", "label": "Extra Large" },
+        { "value": "md:text-2xl", "label": "2X Large" },
+        { "value": "md:text-3xl", "label": "3X Large" },
+        { "value": "md:text-4xl", "label": "4X Large" },
+        { "value": "md:text-5xl", "label": "5X Large" },
+        { "value": "md:text-6xl", "label": "6X Large" }
+      ],
+      "default": "md:text-3xl"
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading Weight",
+      "options": [
+        { "value": "font-light", "label": "Light" },
+        { "value": "font-normal", "label": "Normal" },
+        { "value": "font-medium", "label": "Medium" },
+        { "value": "font-bold", "label": "Bold" }
+      ],
+      "default": "font-normal"
+    },
+    {
+      "type": "select",
+      "id": "heading_align_mobile",
+      "label": "Heading Alignment (Mobile)",
+      "options": [
+        { "value": "text-left", "label": "Left" },
+        { "value": "text-center", "label": "Center" },
+        { "value": "text-right", "label": "Right" }
+      ],
+      "default": "text-left"
+    },
+    {
+      "type": "select",
+      "id": "heading_align_desktop",
+      "label": "Heading Alignment (Desktop)",
+      "options": [
+        { "value": "md:text-left", "label": "Left" },
+        { "value": "md:text-center", "label": "Center" },
+        { "value": "md:text-right", "label": "Right" }
+      ],
+      "default": "md:text-left"
+    },
+    {
+      "type": "header",
+      "content": "Grid Layout"
+    },
+    {
+      "type": "select",
+      "id": "grid_cols_mobile",
+      "label": "Grid Columns (Mobile)",
+      "options": [
+        { "value": "grid-cols-1", "label": "1 Column" },
+        { "value": "grid-cols-2", "label": "2 Columns" },
+        { "value": "grid-cols-3", "label": "3 Columns" },
+        { "value": "grid-cols-4", "label": "4 Columns" }
+      ],
+      "default": "grid-cols-2"
+    },
+    {
+      "type": "select",
+      "id": "grid_cols_desktop",
+      "label": "Grid Columns (Desktop)",
+      "options": [
+        { "value": "md:grid-cols-1", "label": "1 Column" },
+        { "value": "md:grid-cols-2", "label": "2 Columns" },
+        { "value": "md:grid-cols-3", "label": "3 Columns" },
+        { "value": "md:grid-cols-4", "label": "4 Columns" },
+        { "value": "md:grid-cols-5", "label": "5 Columns" },
+        { "value": "md:grid-cols-6", "label": "6 Columns" }
+      ],
+      "default": "md:grid-cols-3"
+    },
+    {
+      "type": "select",
+      "id": "grid_gap",
+      "label": "Grid Gap",
+      "options": [
+        { "value": "gap-0", "label": "None" },
+        { "value": "gap-1", "label": "Extra Small" },
+        { "value": "gap-2", "label": "Small" },
+        { "value": "gap-3", "label": "Medium" },
+        { "value": "gap-4", "label": "Large" },
+        { "value": "gap-6", "label": "Extra Large" },
+        { "value": "gap-8", "label": "2X Large" }
+      ],
+      "default": "gap-3"
+    },
+    {
+      "type": "header",
+      "content": "Recommendation Settings"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "Limit",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "intent",
+      "label": "Intent",
+      "options": [
+        {
+          "value": "related",
+          "label": "Related"
+        },
+        {
+          "value": "complimentary",
+          "label": "Complimentary"
+        }
+      ],
+      "default": "related"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Related products",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

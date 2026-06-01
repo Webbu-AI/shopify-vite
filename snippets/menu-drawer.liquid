@@ -1,58 +1,35 @@
 {% doc %}
-  Enhanced mobile menu drawer with collapsible sublinks support.
+  Mobile menu drawer. Toggled by buttons with `data-toggle-menu` attribute.
 
-  Features:
-  - Expandable sublinks with smooth animations
-  - Accessibility support with proper ARIA attributes
-  - Chevron icons indicating expandable items
-  - Consistent styling with theme patterns
+  @param {linklist} menu - The menu to render
 
-  Uses existing components:
-  - side-drawer: Main drawer functionality
-  - details-disclosure: Collapsible submenu handling
-  - icon: Chevron animations
-  - menu-item: Reusable menu item component
+  @example
+  {% render 'menu-drawer', menu: section.settings.menu %}
 {% enddoc %}
 
-{%- liquid
-  assign menu = section.settings.menu
-  assign menu_links = menu.links
--%}
-
-<side-drawer class="drawer drawer-left bg-black text-white" data-toggle-attribute="data-toggle-menu">
+<div class="drawer drawer-left bg-white text-[var(--color-text)]" data-drawer="menu">
   <div class="h-full grid grid-rows-[auto_1fr] p-5 relative">
-    <div
-      class="ml-auto w-4 top-4 right-4 z-0"
+    <button
+      type="button"
+      class="ml-auto w-8 h-8 flex items-center justify-center tap-target"
       data-toggle-menu
+      aria-label="Close menu"
     >
-      {%- render 'icon' with 'close' -%}
-    </div>
+      {%- render 'icon', icon: 'close' -%}
+    </button>
 
-    <nav class="flex flex-col relative pt-6 overflow-y-auto pb-8" data-max-open-one>
-      {%- for link in section.settings.menu.links -%}
-        {% render 'menu-item',
-          link: link,
-          class: 'py-6 text-4xl text-white px-4 -mx-4',
-          icon_class: 'w-6 h-6 text-white/70',
-          container_class: 'pb-2 border-l border-white/10 ml-4 pl-6'
-        %}
+    <nav class="flex flex-col relative pt-6 overflow-y-auto pb-8">
+      {%- for link in menu.links -%}
+        <a
+          href="{{ link.url }}"
+          class="py-4 text-2xl no-decoration border-b border-[var(--color-border)]"
+          {% if link.current %}aria-current="page"{% endif %}
+        >
+          {{ link.title }}
+        </a>
       {%- endfor -%}
     </nav>
-
-    {% comment %} Footer {% endcomment %}
-    {% comment %}
-      <div class="bg-black text-white relative z-10">
-        <div class="px-4 pb-8 pt-12">
-          <a
-            href="{{ all_products['sota-fuel-hydration-30-pack'].url }}"
-            class="btn text-black w-full"
-          >
-            Shop Now
-          </a>
-        </div>
-      </div>
-    {% endcomment %}
   </div>
-</side-drawer>
+</div>
 
 <div class="overlay" data-toggle-menu></div>

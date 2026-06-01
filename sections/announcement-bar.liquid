@@ -1,0 +1,73 @@
+<announcement-bar
+  class="block w-full bg-[var(--bg-color)] text-[var(--txt-color)]"
+  style="
+    --bg-color: {{ section.settings.background_color }};
+    --txt-color: {{ section.settings.text_color }};
+  "
+>
+  <div class="page-width">
+    <div data-announcement-slider class="w-full overflow-hidden md:flex md:justify-end">
+      {%- for block in section.blocks -%}
+        <div
+          data-announcement-slide
+          class="w-full md:w-auto inline-flex py-2 mx-[7.5px] text-sm leading-none items-center justify-center"
+          {{ block.shopify_attributes }}
+        >
+          {{ block.settings.text }}
+        </div>
+      {%- endfor -%}
+      {%- if section.blocks.size == 0 -%}
+        <div
+          data-announcement-slide
+          class="w-full md:w-auto inline-flex py-2mx-[7.5px] text-sm leading-none items-center justify-center"
+        >
+          Add your first announcement text with a block!
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</announcement-bar>
+
+{% schema %}
+{
+  "name": "Announcement Bar",
+  "tag": "section",
+  "limit": 1,
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#515739"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Text",
+      "type": "text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement Bar",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

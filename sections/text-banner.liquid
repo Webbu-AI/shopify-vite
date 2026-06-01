@@ -1,0 +1,183 @@
+{%- if section.settings.enable_bg_color -%}
+  <style>
+    #shopify-section-{{ section.id }} {
+      background-color: {{ section.settings.bg_color }};
+    }
+    {%- if section.index0 == 0 -%}
+      .shopify-section-group-header-group,
+      header {
+        background-color: {{ section.settings.bg_color }};
+      }
+    {%- endif -%}
+  </style>
+{%- endif -%}
+<div class="page-width">
+  <div class="py-[100px] md:py-[125px]">
+    {% liquid
+      assign heading_tag = section.settings.heading_tag
+      assign heading_size_mobile = section.settings.heading_size_mobile
+      assign heading_size_desktop = section.settings.heading_size_desktop
+      assign heading_weight = section.settings.heading_weight
+      assign heading_align_mobile = section.settings.heading_align_mobile
+      assign heading_align_desktop = section.settings.heading_align_desktop
+    %}
+    <{{ heading_tag }}
+      class="{{ heading_size_mobile }} {{ heading_size_desktop }} {{ heading_weight }} {{ heading_align_mobile }} {{ heading_align_desktop }} pr-[var(--padding-right)] md:pr-[var(--padding-right-desktop)]"
+      style="
+        --padding-right: {{ section.settings.padding_right }}%;
+        --padding-right-desktop: {{ section.settings.padding_right_desktop }}%;
+      "
+      anim-header-right
+    >
+      {{ section.settings.text }}
+    </{{ heading_tag }}>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Text Banner",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["aside"]
+  },
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "header",
+      "content": "Heading Settings"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading Tag",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" },
+        { "value": "div", "label": "Div" }
+      ],
+      "default": "h1"
+    },
+    {
+      "type": "select",
+      "id": "heading_size_mobile",
+      "label": "Heading Size (Mobile)",
+      "options": [
+        { "value": "text-xs", "label": "Extra Small" },
+        { "value": "text-sm", "label": "Small" },
+        { "value": "text-base", "label": "Base" },
+        { "value": "text-lg", "label": "Large" },
+        { "value": "text-xl", "label": "Extra Large" },
+        { "value": "text-2xl", "label": "2X Large" },
+        { "value": "text-3xl", "label": "3X Large" },
+        { "value": "text-4xl", "label": "4X Large" },
+        { "value": "text-5xl", "label": "5X Large" },
+        { "value": "text-6xl", "label": "6X Large" }
+      ],
+      "default": "text-4xl"
+    },
+    {
+      "type": "select",
+      "id": "heading_size_desktop",
+      "label": "Heading Size (Desktop)",
+      "options": [
+        { "value": "md:text-xs", "label": "Extra Small" },
+        { "value": "md:text-sm", "label": "Small" },
+        { "value": "md:text-base", "label": "Base" },
+        { "value": "md:text-lg", "label": "Large" },
+        { "value": "md:text-xl", "label": "Extra Large" },
+        { "value": "md:text-2xl", "label": "2X Large" },
+        { "value": "md:text-3xl", "label": "3X Large" },
+        { "value": "md:text-4xl", "label": "4X Large" },
+        { "value": "md:text-5xl", "label": "5X Large" },
+        { "value": "md:text-6xl", "label": "6X Large" }
+      ],
+      "default": "md:text-6xl"
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading Weight",
+      "options": [
+        { "value": "font-light", "label": "Light" },
+        { "value": "font-normal", "label": "Normal" },
+        { "value": "font-medium", "label": "Medium" },
+        { "value": "font-bold", "label": "Bold" }
+      ],
+      "default": "font-normal"
+    },
+    {
+      "type": "select",
+      "id": "heading_align_mobile",
+      "label": "Heading Alignment (Mobile)",
+      "options": [
+        { "value": "text-left", "label": "Left" },
+        { "value": "text-center", "label": "Center" },
+        { "value": "text-right", "label": "Right" }
+      ],
+      "default": "text-left"
+    },
+    {
+      "type": "select",
+      "id": "heading_align_desktop",
+      "label": "Heading Alignment (Desktop)",
+      "options": [
+        { "value": "md:text-left", "label": "Left" },
+        { "value": "md:text-center", "label": "Center" },
+        { "value": "md:text-right", "label": "Right" }
+      ],
+      "default": "md:text-left"
+    },
+    {
+      "type": "header",
+      "content": "Spacing Settings"
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "label": "Extra padding right",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_right_desktop",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "label": "Extra padding right (desktop)",
+      "default": 20
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_bg_color",
+      "label": "Enable background color",
+      "default": false
+    },
+    {
+      "type": "color_background",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#FFEAD1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Text Banner",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

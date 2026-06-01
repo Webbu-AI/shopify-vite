@@ -1,0 +1,129 @@
+{%- liquid
+  assign title = section.settings.title
+  assign columns_mobile = section.settings.columns_mobile
+  assign columns_desktop = section.settings.columns_desktop
+-%}
+
+<section class="collection-list py-8 md:py-12">
+  <div class="page-width">
+    {%- if title != blank -%}
+      <h2 class="h3 mb-8 text-center">{{ title }}</h2>
+    {%- endif -%}
+
+    <div class="grid {{ columns_mobile }} {{ columns_desktop }} gap-4 md:gap-6">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'collection' -%}
+            {%- liquid
+              assign collection = block.settings.collection
+              assign custom_image = block.settings.custom_image
+              assign custom_title = block.settings.custom_title
+              assign button_text = block.settings.button_text
+              assign card_image = custom_image | default: collection.featured_image
+              assign card_title = custom_title | default: collection.title
+            -%}
+            <a href="{{ collection.url }}" class="block no-decoration group relative" {{ block.shopify_attributes }}>
+              <div class="media pb-[125%] bg-gray-50 rounded-lg overflow-hidden">
+                {%- if card_image -%}
+                  {% render 'image',
+                    image: card_image,
+                    src_width: 800,
+                    widths: '400, 600, 800, 1200',
+                    sizes: '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw',
+                    class: 'img-fit transition-transform duration-500 group-hover:scale-105'
+                  %}
+                {%- else -%}
+                  {{ 'collection-1' | placeholder_svg_tag: 'w-full h-full object-cover' }}
+                {%- endif -%}
+                <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                <div class="absolute bottom-4 left-4 right-4 text-white">
+                  <h3 class="text-xl md:text-2xl font-medium mb-2">{{ card_title }}</h3>
+                  {%- if button_text != blank -%}
+                    <span class="inline-block text-sm underline">{{ button_text }}</span>
+                  {%- endif -%}
+                </div>
+              </div>
+            </a>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection List",
+  "disabled_on": {
+    "groups": ["aside"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Shop by Collection"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns (mobile)",
+      "options": [
+        { "value": "grid-cols-1", "label": "1" },
+        { "value": "grid-cols-2", "label": "2" }
+      ],
+      "default": "grid-cols-1"
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Columns (desktop)",
+      "options": [
+        { "value": "md:grid-cols-2", "label": "2" },
+        { "value": "md:grid-cols-3", "label": "3" },
+        { "value": "md:grid-cols-4", "label": "4" }
+      ],
+      "default": "md:grid-cols-3"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Custom image",
+          "info": "Overrides the collection's featured image"
+        },
+        {
+          "type": "text",
+          "id": "custom_title",
+          "label": "Custom title"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button text",
+          "default": "Shop now"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection List",
+      "blocks": [
+        { "type": "collection" },
+        { "type": "collection" },
+        { "type": "collection" }
+      ]
+    }
+  ]
+}
+{% endschema %}

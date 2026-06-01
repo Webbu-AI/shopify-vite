@@ -1,47 +1,74 @@
-{% comment %}
-  This section is used in the collection template to render collection page
-  listing all products within a collection.
+{%- liquid
+  assign show_title = section.settings.show_title
+-%}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
-{% endcomment %}
+<div class="page-width py-8 md:py-12">
+  {%- if show_title -%}
+    <header class="mb-8 text-center">
+      <h1 class="h2">{{ collection.title }}</h1>
+      {%- if collection.description != blank -%}
+        <div class="rte mt-3 max-w-2xl mx-auto">{{ collection.description }}</div>
+      {%- endif -%}
+      {%- if section.settings.show_product_count -%}
+        <p class="text-sm text-gray-600 mt-2">
+          {{ 'products.facets.product_count' | t: count: collection.products_count, total: collection.products_count | default: '%{count} of %{total} products' }}
+        </p>
+      {%- endif -%}
+    </header>
+  {%- endif -%}
 
-<h1>{{ collection.title }}</h1>
-
-<div class="collection-products">
-  {% paginate collection.products by 20 %}
-    {% for product in collection.products %}
-      <div class="collection-product">
-        {% if product.featured_image %}
-          {% render 'image',
-            class: 'collection-product__image',
-            image: product.featured_image,
-            url: product.url,
-            width: 400,
-            height: 400,
-            crop: 'center'
-          %}
-        {% endif %}
-        <div class="collection-product__content">
-          <p>{{ product.title | escape | link_to: product.url }}</p>
-          <p>{{ product.price | money }}</p>
+  {%- if collection.products_count > 0 -%}
+    {%- paginate collection.products by 24 -%}
+      <infinite-collection class="block">
+        <div class="js-filter-results grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+          {%- for product in collection.products -%}
+            {%- render 'product-card', product: product, collection: collection -%}
+          {%- endfor -%}
         </div>
-      </div>
-    {% endfor %}
-
-    {{ paginate | default_pagination }}
-  {% endpaginate %}
+        <div class="mt-8">
+          {%- render 'pagination', paginate: paginate -%}
+        </div>
+      </infinite-collection>
+    {%- endpaginate -%}
+  {%- else -%}
+    <div class="py-16 text-center max-w-md mx-auto">
+      <h2 class="h3 mb-4">{{ 'sections.collection_template.empty' | t | default: 'No products yet' }}</h2>
+      <p class="text-gray-600 mb-8">
+        {{ 'sections.collection_template.empty_text' | t | default: 'Check back soon.' }}
+      </p>
+      <a href="{{ routes.collections_url }}" class="btn btn--primary inline-flex">
+        {{ 'sections.collection_template.browse_collections' | t | default: 'Browse collections' }}
+      </a>
+    </div>
+  {%- endif -%}
 </div>
-
-{% stylesheet %}
-  .collection-products {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-  }
-{% endstylesheet %}
 
 {% schema %}
 {
-  "name": "t:general.collection",
-  "settings": []
+  "name": "Collection",
+  "tag": "section",
+  "enabled_on": {
+    "templates": ["collection"]
+  },
+  "limit": 1,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show title",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_count",
+      "label": "Show product count",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection"
+    }
+  ]
 }
 {% endschema %}

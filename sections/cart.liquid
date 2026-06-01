@@ -1,37 +1,93 @@
-{% comment %}
-  This section is used in the cart template to render /cart page with an
-  overview of the items in customer's cart.
+<div class="page-width py-8 md:py-12">
+  <h1 class="h2 mb-8">{{ 'cart.title' | t | default: 'Your cart' }}</h1>
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/cart
-{% endcomment %}
+  {%- if cart.item_count > 0 -%}
+    <form action="{{ routes.cart_url }}" method="post" novalidate class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+      <div class="space-y-4">
+        {%- for item in cart.items -%}
+          <div class="grid grid-cols-[100px_1fr_auto] md:grid-cols-[120px_1fr_120px_auto] gap-4 items-start py-4 border-b border-[var(--color-border)]">
+            <a href="{{ item.url }}" class="block">
+              <div class="media pb-[100%] bg-gray-50 rounded">
+                {%- if item.image -%}
+                  {% render 'image', image: item.image, src_width: 200, class: 'img-fit' %}
+                {%- endif -%}
+              </div>
+            </a>
 
-<h1>{{ 'cart.title' | t }}</h1>
+            <div>
+              <a href="{{ item.url }}" class="text-base font-medium no-decoration hover:opacity-70">
+                {{ item.product.title }}
+              </a>
+              {%- if item.product.has_only_default_variant == false -%}
+                <p class="text-sm text-gray-600 mt-1">{{ item.variant.title }}</p>
+              {%- endif -%}
+              <p class="text-sm mt-2 md:hidden">{{ item.final_price | money }}</p>
+              <a href="{{ item.url_to_remove }}" class="text-sm text-gray-600 underline mt-2 inline-block">
+                {{ 'cart.remove' | t | default: 'Remove' }}
+              </a>
+            </div>
 
-<form action="{{ routes.cart_url }}" method="post">
-  <table>
-    {% for item in cart.items %}
-      <tr>
-        <td>
-          {% render 'image', image: item.image, url: item.url %}
-        </td>
-        <td>
-          <p>{{ item.product.title }}</p>
-          {{ 'cart.remove' | t | link_to: item.url_to_remove }}
-        </td>
-        <td>
-          <input type="text" name="updates[]" value="{{ item.quantity }}">
-          <input type="submit" value="{{ 'cart.update' | t }}">
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+            <div class="md:col-start-3 col-span-2 md:col-span-1">
+              <quantity-input class="flex items-center border border-[var(--color-border)] rounded w-fit">
+                <button type="button" name="minus" class="w-9 h-9 flex items-center justify-center" aria-label="Decrease">
+                  {%- render 'icon', icon: 'minus' -%}
+                </button>
+                <input
+                  type="number"
+                  name="updates[]"
+                  value="{{ item.quantity }}"
+                  min="0"
+                  class="input w-10 text-center"
+                  aria-label="Quantity"
+                >
+                <button type="button" name="plus" class="w-9 h-9 flex items-center justify-center" aria-label="Increase">
+                  {%- render 'icon', icon: 'plus' -%}
+                </button>
+              </quantity-input>
+            </div>
 
-  <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}">
-</form>
+            <div class="hidden md:block text-right">
+              <p class="font-medium">{{ item.final_line_price | money }}</p>
+            </div>
+          </div>
+        {%- endfor -%}
+
+        <button type="submit" name="update" class="text-sm underline">
+          {{ 'cart.update' | t | default: 'Update cart' }}
+        </button>
+      </div>
+
+      <aside class="lg:sticky lg:top-24 lg:self-start p-6 border border-[var(--color-border)] rounded-lg">
+        <div class="flex justify-between mb-2">
+          <span>{{ 'cart.subtotal' | t | default: 'Subtotal' }}</span>
+          <span class="font-medium">{{ cart.total_price | money }}</span>
+        </div>
+        <p class="text-sm text-gray-600 mb-6">
+          {{ 'cart.shipping_at_checkout' | t | default: 'Shipping calculated at checkout.' }}
+        </p>
+
+        <button type="submit" name="checkout" class="btn btn--primary w-full">
+          {{ 'cart.checkout' | t | default: 'Checkout' }}
+        </button>
+      </aside>
+    </form>
+  {%- else -%}
+    <div class="py-16 text-center max-w-md mx-auto">
+      <p class="text-gray-600 mb-8">{{ 'cart.empty' | t | default: 'Your cart is empty.' }}</p>
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary inline-flex">
+        {{ 'cart.continue_browsing' | t | default: 'Continue shopping' }}
+      </a>
+    </div>
+  {%- endif -%}
+</div>
 
 {% schema %}
 {
-  "name": "t:general.cart",
+  "name": "Cart",
+  "limit": 1,
+  "enabled_on": {
+    "templates": ["cart"]
+  },
   "settings": []
 }
 {% endschema %}

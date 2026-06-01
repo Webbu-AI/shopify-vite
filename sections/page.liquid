@@ -1,17 +1,222 @@
-{% comment %}
-  This section is used in the page template to render store pages like About us
-  or Contact us.
+{% liquid
+  assign show_title = section.settings.show_title
+  assign title_alignment = section.settings.title_alignment
+  assign title_size = section.settings.title_size
+  assign container_size = section.settings.container_size
+  assign padding_top = section.settings.padding_top
+  assign padding_bottom = section.settings.padding_bottom
+  assign background_color = section.settings.background_color
+  assign text_color = section.settings.text_color
+%}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/page
-{% endcomment %}
+<div
+  class="{{ padding_top }} {{ padding_bottom }}"
+  {% if background_color != blank %}
+    style="--bg-color: {{ background_color }}; background-color: var(--bg-color);"
+  {% endif %}
+>
+  <div class="page-width {{ container_size }}">
+    {%- if show_title -%}
+      <div class="mb-8 {{ title_alignment }}">
+        <h1
+          class="{{ title_size }}"
+          {% if text_color != blank %}
+            style="color: {{ text_color }};"
+          {% endif %}
+        >
+          {{ page.title }}
+        </h1>
+      </div>
+    {%- endif -%}
 
-<h1>{{ page.title }}</h1>
-
-{{ page.content }}
+    <div
+      class="prose prose-lg max-w-none{% if text_color != blank %} prose-invert{% endif %}"
+      {% if text_color != blank %}
+        style="color: {{ text_color }};"
+      {% endif %}
+    >
+      {{ page.content }}
+    </div>
+  </div>
+</div>
 
 {% schema %}
 {
-  "name": "t:general.page",
-  "settings": []
+  "name": "Main Page",
+  "tag": "section",
+  "enabled_on": {
+    "templates": ["page"]
+  },
+  "limit": 1,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Title Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show Page Title",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "label": "Title Alignment",
+      "options": [
+        {
+          "value": "text-left",
+          "label": "Left"
+        },
+        {
+          "value": "text-center",
+          "label": "Center"
+        },
+        {
+          "value": "text-right",
+          "label": "Right"
+        }
+      ],
+      "default": "text-center",
+      "visible_if": "{{ section.settings.show_title == true }}"
+    },
+    {
+      "type": "select",
+      "id": "title_size",
+      "label": "Title Size",
+      "options": [
+        {
+          "value": "text-2xl md:text-3xl",
+          "label": "Small"
+        },
+        {
+          "value": "text-3xl md:text-4xl",
+          "label": "Medium"
+        },
+        {
+          "value": "text-4xl md:text-5xl",
+          "label": "Large"
+        },
+        {
+          "value": "text-5xl md:text-6xl",
+          "label": "Extra Large"
+        }
+      ],
+      "default": "text-3xl md:text-4xl",
+      "visible_if": "{{ section.settings.show_title == true }}"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "container_size",
+      "label": "Container Size",
+      "options": [
+        {
+          "value": "max-w-3xl mx-auto",
+          "label": "Narrow"
+        },
+        {
+          "value": "max-w-4xl mx-auto",
+          "label": "Medium"
+        },
+        {
+          "value": "max-w-5xl mx-auto",
+          "label": "Wide"
+        },
+        {
+          "value": "",
+          "label": "Default"
+        },
+        {
+          "value": "max-w-none",
+          "label": "Full Width"
+        }
+      ],
+      "default": "max-w-4xl mx-auto"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "select",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "options": [
+        {
+          "value": "pt-0",
+          "label": "None"
+        },
+        {
+          "value": "pt-8 md:pt-12",
+          "label": "Small"
+        },
+        {
+          "value": "pt-12 md:pt-16",
+          "label": "Medium"
+        },
+        {
+          "value": "pt-16 md:pt-24",
+          "label": "Large"
+        },
+        {
+          "value": "pt-24 md:pt-32",
+          "label": "Extra Large"
+        }
+      ],
+      "default": "pt-12 md:pt-16"
+    },
+    {
+      "type": "select",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "options": [
+        {
+          "value": "pb-0",
+          "label": "None"
+        },
+        {
+          "value": "pb-8 md:pb-12",
+          "label": "Small"
+        },
+        {
+          "value": "pb-12 md:pb-16",
+          "label": "Medium"
+        },
+        {
+          "value": "pb-16 md:pb-24",
+          "label": "Large"
+        },
+        {
+          "value": "pb-24 md:pb-32",
+          "label": "Extra Large"
+        }
+      ],
+      "default": "pb-12 md:pb-16"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Main Page",
+      "category": "Content"
+    }
+  ]
 }
 {% endschema %}

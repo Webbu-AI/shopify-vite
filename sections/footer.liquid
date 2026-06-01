@@ -1,56 +1,169 @@
-<footer>
-  <div class="footer__copyright">
-    &copy;
-    {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
-  </div>
+{%- liquid
+  assign heading = section.settings.heading
+  assign blocks = section.blocks
+-%}
 
-  <div class="footer__links">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+<footer class="bg-[var(--color-background-footer)] text-[var(--color-text-footer)] pt-12 pb-6">
+  <div class="page-width">
+    {%- if heading != blank -%}
+      <h2 class="h3 mb-8">{{ heading }}</h2>
+    {%- endif -%}
 
-  <div class="footer__payment">
-    {% if section.settings.show_payment_icons %}
-      {% for type in shop.enabled_payment_types %}
-        {{ type | payment_type_svg_tag }}
-      {% endfor %}
-    {% endif %}
+    {%- if blocks.size > 0 -%}
+      <div class="grid grid-cols-1 md:grid-cols-{{ blocks.size | at_most: 4 }} gap-8 mb-12">
+        {%- for block in blocks -%}
+          <div {{ block.shopify_attributes }}>
+            {%- case block.type -%}
+              {%- when 'link_list' -%}
+                {%- if block.settings.heading != blank -%}
+                  <h3 class="text-base font-semibold mb-4">{{ block.settings.heading }}</h3>
+                {%- endif -%}
+                {%- if block.settings.menu != blank -%}
+                  <ul class="space-y-2">
+                    {%- for link in block.settings.menu.links -%}
+                      <li>
+                        <a href="{{ link.url }}" class="opacity-70 hover:opacity-100 transition-opacity no-decoration">
+                          {{ link.title }}
+                        </a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+
+              {%- when 'text' -%}
+                {%- if block.settings.heading != blank -%}
+                  <h3 class="text-base font-semibold mb-4">{{ block.settings.heading }}</h3>
+                {%- endif -%}
+                {%- if block.settings.text != blank -%}
+                  <div class="opacity-70">{{ block.settings.text }}</div>
+                {%- endif -%}
+
+              {%- when 'newsletter' -%}
+                {%- if block.settings.heading != blank -%}
+                  <h3 class="text-base font-semibold mb-4">{{ block.settings.heading }}</h3>
+                {%- endif -%}
+                {%- if block.settings.text != blank -%}
+                  <div class="opacity-70 mb-3">{{ block.settings.text }}</div>
+                {%- endif -%}
+                {% form 'customer', class: 'flex gap-2' %}
+                  <input type="hidden" name="contact[tags]" value="newsletter">
+                  <input
+                    type="email"
+                    name="contact[email]"
+                    class="flex-1 px-3 py-2 text-black rounded"
+                    placeholder="you@example.com"
+                    required
+                    aria-label="Email"
+                  >
+                  <button type="submit" class="btn !min-w-0 !py-2 !px-4">
+                    {{ 'newsletter.button_label' | t | default: 'Subscribe' }}
+                  </button>
+                {% endform %}
+            {%- endcase -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <div class="border-t border-white/20 pt-6 flex flex-col md:flex-row md:justify-between gap-4 text-sm opacity-70">
+      <div>
+        &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ powered_by_link }}
+      </div>
+
+      {%- if section.settings.show_payment_icons -%}
+        <div class="flex gap-2 flex-wrap">
+          {%- for type in shop.enabled_payment_types -%}
+            {{ type | payment_type_svg_tag }}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
   </div>
 </footer>
 
-{% stylesheet %}
-  footer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
-  }
-  footer a {
-    text-decoration: none;
-    color: var(--color-foreground);
-  }
-  footer .footer__links,
-  footer .footer__payment {
-    display: flex;
-    gap: 1rem;
-  }
-{% endstylesheet %}
-
 {% schema %}
 {
-  "name": "t:general.footer",
+  "name": "Footer",
+  "limit": 1,
+  "enabled_on": {
+    "groups": ["footer"]
+  },
   "settings": [
     {
-      "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
     },
     {
       "type": "checkbox",
       "id": "show_payment_icons",
-      "label": "t:labels.show_payment_icons",
+      "label": "Show payment icons",
       "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link_list",
+      "name": "Menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Links"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "About"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Tell your story here.</p>"
+        }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Subscribe"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Stay up to date.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer",
+      "blocks": [
+        { "type": "link_list" },
+        { "type": "text" },
+        { "type": "newsletter" }
+      ]
     }
   ]
 }

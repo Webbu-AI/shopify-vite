@@ -1,52 +1,156 @@
-{% comment %}
-  This section is used in the product template to render product page with
-  media, content, and add-to-cart form.
+{%- liquid
+  assign product_form_id = 'product-form-' | append: section.id
+  assign current_variant = product.selected_or_first_available_variant
+-%}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/product
-{% endcomment %}
+<div class="product page-width py-8 md:py-12" data-section="{{ section.id }}">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
+    {%- comment -%} Product gallery {%- endcomment -%}
+    <div class="product__media">
+      {%- if product.media.size > 0 -%}
+        <div class="grid grid-cols-1 gap-3">
+          {%- for media in product.media -%}
+            <div class="media pb-[100%] bg-gray-50 rounded-lg">
+              {% render 'image',
+                image: media.preview_image,
+                src_width: 800,
+                widths: '400, 600, 800, 1200',
+                sizes: '(min-width: 768px) 50vw, 100vw',
+                class: 'img-fit',
+                lazy_load: forloop.first == false
+              %}
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <div class="media pb-[100%] bg-gray-50 rounded-lg flex items-center justify-center">
+          {{ 'product-1' | placeholder_svg_tag: 'w-full h-full object-contain text-gray-300' }}
+        </div>
+      {%- endif -%}
+    </div>
 
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
-</div>
+    {%- comment -%} Product info {%- endcomment -%}
+    <div class="product__info md:sticky md:top-24">
+      {%- if product.vendor != blank -%}
+        <p class="text-xs uppercase tracking-widest text-gray-600 mb-2">{{ product.vendor }}</p>
+      {%- endif -%}
 
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
+      <h1 class="h3 mb-4">{{ product.title }}</h1>
 
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
+      <div class="text-xl mb-6">
+        {%- render 'price', product: product -%}
+      </div>
 
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
-        >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
-      {% endfor %}
-    </select>
+      <product-form>
+        <div class="js-form-error" role="alert" hidden></div>
 
-    <input type="text" name="quantity" min="1" value="1">
+        {%- form 'product', product, id: product_form_id, class: 'js-product-form' -%}
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
 
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
+          {%- if product.has_only_default_variant == false -%}
+            <div class="mb-6 space-y-4">
+              {%- for option in product.options_with_values -%}
+                <div>
+                  <label class="block text-sm font-medium mb-2" for="Option-{{ section.id }}-{{ forloop.index0 }}">
+                    {{ option.name }}
+                  </label>
+                  <select
+                    id="Option-{{ section.id }}-{{ forloop.index0 }}"
+                    name="options[{{ option.name }}]"
+                    class="w-full border border-[var(--color-border)] rounded px-3 py-2"
+                  >
+                    {%- for value in option.values -%}
+                      <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>
+                        {{ value }}
+                      </option>
+                    {%- endfor -%}
+                  </select>
+                </div>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+          <div class="flex items-center gap-3 mb-6">
+            <quantity-input class="flex items-center border border-[var(--color-border)] rounded">
+              <button type="button" name="minus" class="w-10 h-10 flex items-center justify-center" aria-label="Decrease quantity">
+                {%- render 'icon', icon: 'minus' -%}
+              </button>
+              <input
+                type="number"
+                name="quantity"
+                value="1"
+                min="1"
+                class="input w-12 text-center"
+                aria-label="Quantity"
+              >
+              <button type="button" name="plus" class="w-10 h-10 flex items-center justify-center" aria-label="Increase quantity">
+                {%- render 'icon', icon: 'plus' -%}
+              </button>
+            </quantity-input>
+          </div>
+
+          <button
+            type="submit"
+            name="add"
+            class="btn btn--primary w-full"
+            {% if current_variant.available == false %}disabled{% endif %}
+          >
+            {%- if current_variant.available -%}
+              {{ 'products.product.add_to_cart' | t | default: 'Add to cart' }}
+            {%- else -%}
+              {{ 'products.product.sold_out' | t | default: 'Sold out' }}
+            {%- endif -%}
+          </button>
+
+          {%- if section.settings.show_dynamic_checkout -%}
+            <div class="mt-3">
+              {{ form | payment_button }}
+            </div>
+          {%- endif -%}
+        {%- endform -%}
+      </product-form>
+
+      {%- if product.description != blank -%}
+        <div class="rte mt-8">
+          {{ product.description }}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_share -%}
+        <div class="mt-8 pt-6 border-t border-[var(--color-border)]">
+          <p class="text-sm">Share: <a href="{{ shop.url }}{{ product.url }}" class="link">link</a></p>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
 </div>
 
 {% schema %}
 {
-  "name": "t:general.product",
-  "settings": [],
-  "disabled_on": {
-    "groups": ["header", "footer"]
-  }
+  "name": "Product",
+  "tag": "section",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "limit": 1,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Show dynamic checkout button",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share",
+      "label": "Show share",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product"
+    }
+  ]
 }
 {% endschema %}

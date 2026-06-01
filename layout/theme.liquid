@@ -1,25 +1,60 @@
 <!doctype html>
-<html lang="{{ request.locale.iso_code }}">
+<html class="no-js" lang="{{ request.locale.iso_code }}">
   <head>
-    {% # Inlined CSS Variables %}
-    {% render 'css-variables' %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
 
-    {% # Load and preload the critical CSS %}
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- endif -%}
+
+    {%- assign heading_font = settings.font_heading -%}
+    {%- assign body_font = settings.font_body -%}
+    {%- assign logo_font = settings.font_logo -%}
+
+    {%- unless request.design_mode -%}
+      {%- if heading_font %}{{ heading_font | font_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: true }}{% endif -%}
+      {%- if body_font %}{{ body_font | font_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: true }}{% endif -%}
+      {%- if logo_font %}{{ logo_font | font_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: true }}{% endif -%}
+    {%- endunless -%}
+
+    {% render 'css-variables' %}
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
 
-    {% # Social, title, etc. %}
+    <link rel="stylesheet" href="{{ 'style.bundle.css' | asset_url }}">
+    {{ 'main.bundle.css' | asset_url | stylesheet_tag }}
+
     {% render 'meta-tags' %}
 
     {{ content_for_header }}
+
+    <script>
+      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+    </script>
+
+    <script src="{{ 'main.bundle.js' | asset_url }}" defer="defer"></script>
   </head>
 
-  <body>
+  <body class="bg-[var(--color-background)] text-[var(--color-text)]">
+    <a class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:z-[1000]" href="#main-content">
+      Skip to content
+    </a>
+
     {% render 'css-helper-variables' %}
 
-    {% sections 'header-group' %}
+    <div id="header-group">
+      {% sections 'header-group' %}
+    </div>
 
-    {{ content_for_layout }}
+    <main id="main-content" role="main" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
 
-    {% sections 'footer-group' %}
+    {%- if request.path != '/challenge' -%}
+      {% sections 'footer-group' %}
+    {%- endif -%}
   </body>
 </html>

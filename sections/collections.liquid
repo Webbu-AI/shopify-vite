@@ -1,83 +1,69 @@
-{% comment %}
-  This section is used in the list-collections template to render a list of
-  collections.
+<div class="page-width py-8 md:py-12">
+  <h1 class="h2 text-center mb-8">{{ section.settings.heading | default: 'Collections' }}</h1>
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
-{% endcomment %}
-
-<h1>{{ 'collections.title' | t }}</h1>
-
-<div
-  class="collections {{ section.settings.grid_item_width }}"
-  style="--grid-gap: {{ section.settings.grid_gap }}px"
->
-  {% for collection in collections %}
-    <a class="collection-card" href="{{ collection.url }}">
-      {% if collection.featured_image %}
-        {% render 'image',
-          class: 'collection-card__image',
-          image: collection.featured_image,
-          width: 600,
-          height: 600,
-          crop: 'center'
-        %}
-      {% endif %}
-
-      <div class="collection-card__content">
-        <p>{{ collection.title }}</p>
-
-        {% if collection.description %}
-          <p>{{ collection.description | strip_html | truncatewords: 15 }}</p>
-        {% endif %}
-      </div>
-    </a>
-  {% endfor %}
+  {%- if collections.size > 0 -%}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      {%- for collection in collections -%}
+        {%- unless collection.handle == 'frontpage' -%}
+          {%- if section.settings.show_empty_collections or collection.all_products_count > 0 -%}
+            <a href="{{ collection.url }}" class="block no-decoration group">
+              <div class="media pb-[75%] bg-gray-50 rounded-lg mb-3 overflow-hidden">
+                {%- if collection.featured_image -%}
+                  {% render 'image',
+                    image: collection.featured_image,
+                    src_width: 800,
+                    widths: '400, 600, 800, 1200',
+                    sizes: '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw',
+                    class: 'img-fit transition-transform duration-500 group-hover:scale-105'
+                  %}
+                {%- else -%}
+                  {{ 'collection-1' | placeholder_svg_tag: 'w-full h-full object-cover' }}
+                {%- endif -%}
+              </div>
+              <h2 class="text-xl font-medium group-hover:opacity-70 transition-opacity">{{ collection.title }}</h2>
+              {%- if section.settings.show_count -%}
+                <p class="text-sm text-gray-600 mt-1">{{ collection.all_products_count }} products</p>
+              {%- endif -%}
+            </a>
+          {%- endif -%}
+        {%- endunless -%}
+      {%- endfor -%}
+    </div>
+  {%- else -%}
+    <div class="py-16 text-center max-w-md mx-auto">
+      <h2 class="h3 mb-4">No collections found</h2>
+      <p class="text-gray-600">There are no collections available.</p>
+    </div>
+  {%- endif -%}
 </div>
-
-{% stylesheet %}
-  .collections {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(var(--collection-card-size), 100%), 1fr));
-    gap: var(--grid-gap);
-  }
-  .collections--compact {
-    --collection-card-size: 160px;
-  }
-  .collections--full {
-    --collection-card-size: 280px;
-  }
-  .collection-card {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-{% endstylesheet %}
 
 {% schema %}
 {
-  "name": "t:general.collections_grid",
+  "name": "List Collections",
+  "tag": "section",
+  "limit": 1,
+  "enabled_on": {
+    "templates": ["list-collections"]
+  },
   "settings": [
     {
-      "type": "select",
-      "id": "grid_item_width",
-      "label": "t:labels.grid_item_width",
-      "options": [
-        { "value": "collections--compact", "label": "t:options.size.small" },
-        { "value": "collections--full", "label": "t:options.size.large" }
-      ],
-      "default": "collections--full"
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Collections"
     },
     {
-      "type": "range",
-      "id": "grid_gap",
-      "label": "t:labels.grid_gap",
-      "min": 0,
-      "max": 50,
-      "step": 5,
-      "unit": "px",
-      "default": 10
+      "type": "checkbox",
+      "id": "show_count",
+      "label": "Show product count",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_empty_collections",
+      "label": "Show empty collections",
+      "default": false
     }
-  ],
-  "presets": [{ "name": "t:general.collections_grid" }]
+  ]
 }
 {% endschema %}
