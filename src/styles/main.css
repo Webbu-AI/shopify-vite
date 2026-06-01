@@ -162,6 +162,15 @@ img {
     opacity: 0;
 }
 
+/* Icons — override Shopify critical.css svg{max-width:100%} so icons keep their attribute size inside flex containers */
+.icon {
+    max-width: none !important;
+    width: auto;
+    height: auto;
+    flex-shrink: 0;
+    display: inline-block;
+}
+
 /* Media containers */
 .media {
     overflow: hidden;
@@ -328,8 +337,12 @@ summary::-webkit-details-marker {
 }
 
 /* Load state utilities */
-.js-hidden,
-.no-js-hidden {
+.js-hidden {
+    display: none !important;
+}
+
+/* Lazy-loaded images: hidden only when JS isn't loaded; <noscript> fallback shows */
+.no-js .no-js-hidden {
     display: none !important;
 }
 

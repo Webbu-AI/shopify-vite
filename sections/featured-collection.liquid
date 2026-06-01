@@ -1,66 +1,46 @@
-<div class="featured-collection section-spacing">
-  <div class="flex md:flex-row flex-col justify-between page-width mb-6">
-    {%- if section.settings.title != blank -%}
-      {% liquid
-        assign heading_tag = section.settings.heading_tag
-        assign heading_size_mobile = section.settings.heading_size_mobile
-        assign heading_size_desktop = section.settings.heading_size_desktop
-        assign heading_weight = section.settings.heading_weight
-        assign heading_align_mobile = section.settings.heading_align_mobile
-        assign heading_align_desktop = section.settings.heading_align_desktop
-      %}
-      <{{ heading_tag }} class="flex items-center {{ heading_size_mobile }} {{ heading_size_desktop }} {{ heading_weight }} {{ heading_align_mobile }} {{ heading_align_desktop }}">
-        {{ section.settings.title }}
-      </{{ heading_tag }}>
-    {%- endif -%}
-    {%- if section.settings.show_product_count
-      or section.settings.show_button_mobile
-      or section.settings.show_button_desktop
-    -%}
-      <div class="flex items-center gap-6 md:justify-normal justify-between">
-        {%- if section.settings.show_product_count -%}
-          <div class="">
-            {{
-              'sections.featured_collection.product_count'
-              | t: count: section.settings.collection.all_products_count
-            }}
+{%- liquid
+  assign collection = section.settings.collection
+  assign products_shown = section.settings.products_shown
+  assign columns = section.settings.columns
+-%}
+
+<div class="featured-collection py-8 md:py-12">
+  <div class="page-width">
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+      {%- if section.settings.title != blank -%}
+        <h2 class="h3">{{ section.settings.title }}</h2>
+      {%- endif -%}
+
+      {%- if collection and section.settings.show_view_all -%}
+        <a href="{{ collection.url }}" class="text-sm underline self-start md:self-auto">
+          {{ section.settings.button_label | default: 'View all' }}
+        </a>
+      {%- endif -%}
+    </div>
+
+    {%- if collection.products.size > 0 -%}
+      <div class="grid grid-cols-2 {{ columns }} gap-3 md:gap-6">
+        {%- for product in collection.products limit: products_shown -%}
+          {%- render 'product-card', product: product, collection: collection -%}
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <div class="grid grid-cols-2 {{ columns }} gap-3 md:gap-6">
+        {%- assign placeholder_count = products_shown | at_most: 4 -%}
+        {%- for i in (1..placeholder_count) -%}
+          <div>
+            <div class="media aspect-square bg-gray-50 rounded-lg overflow-hidden flex items-center justify-center">
+              {{ 'product-1' | placeholder_svg_tag: 'max-w-[60%] h-auto text-gray-300' }}
+            </div>
+            <div class="pt-3">
+              <p class="text-xs uppercase tracking-widest text-gray-600 mb-1">Brand</p>
+              <h3 class="text-base font-medium">Product title</h3>
+              <p class="text-sm mt-1">{{ 12345 | money }}</p>
+            </div>
           </div>
-        {%- endif -%}
-        {%- if section.settings.show_button_mobile or section.settings.show_button_desktop -%}
-          {% liquid
-            assign button_class = ''
-            if section.settings.show_button_mobile and section.settings.show_button_desktop
-              assign button_class = 'flex'
-            elsif section.settings.show_button_mobile
-              assign button_class = 'flex md:hidden'
-            elsif section.settings.show_button_desktop
-              assign button_class = 'hidden md:flex'
-            endif
-          %}
-          {%- if section.settings.button_style == 'btn--custom' -%}
-            <a
-              class="btn {{ button_class }}"
-              style="--button-bg: {{ section.settings.custom_bg_color }}; --button-text: {{ section.settings.custom_text_color }}; --button-border: {{ section.settings.custom_border_color }}; --button-hover-bg: {{ section.settings.custom_hover_color }}; --button-hover-border: {{ section.settings.custom_hover_border_color }}; --button-border-width: {{ section.settings.custom_border_width }}px"
-              href="{{ section.settings.collection.url }}"
-            >
-              {{- section.settings.button_label -}}
-            </a>
-          {%- else -%}
-            <a
-              class="btn {{ section.settings.button_style }} {{ button_class }}"
-              href="{{ section.settings.collection.url }}"
-            >
-              {{- section.settings.button_label -}}
-            </a>
-          {%- endif -%}
-        {%- endif -%}
+        {%- endfor -%}
       </div>
     {%- endif -%}
-  </div>
-  <div class="featured-collection__products gap-3 grid grid-cols-2 md:grid-cols-4 page-width">
-    {%- for product in section.settings.collection.products limit: section.settings.products_shown -%}
-      {%- render 'product-card', product: product -%}
-    {%- endfor -%}
   </div>
 </div>
 
@@ -73,103 +53,10 @@
   },
   "settings": [
     {
-      "type": "header",
-      "content": "Heading"
-    },
-    {
       "type": "text",
       "id": "title",
       "label": "Title",
-      "default": "Products - a selection from our catalog"
-    },
-    {
-      "type": "select",
-      "id": "heading_tag",
-      "label": "Heading Tag",
-      "options": [
-        { "value": "h1", "label": "H1" },
-        { "value": "h2", "label": "H2" },
-        { "value": "h3", "label": "H3" },
-        { "value": "h4", "label": "H4" },
-        { "value": "h5", "label": "H5" },
-        { "value": "h6", "label": "H6" },
-        { "value": "div", "label": "Div" }
-      ],
-      "default": "h2"
-    },
-    {
-      "type": "select",
-      "id": "heading_size_mobile",
-      "label": "Heading Size (Mobile)",
-      "options": [
-        { "value": "text-xs", "label": "Extra Small" },
-        { "value": "text-sm", "label": "Small" },
-        { "value": "text-base", "label": "Base" },
-        { "value": "text-lg", "label": "Large" },
-        { "value": "text-xl", "label": "Extra Large" },
-        { "value": "text-2xl", "label": "2X Large" },
-        { "value": "text-3xl", "label": "3X Large" },
-        { "value": "text-4xl", "label": "4X Large" },
-        { "value": "text-5xl", "label": "5X Large" },
-        { "value": "text-6xl", "label": "6X Large" }
-      ],
-      "default": "text-2xl"
-    },
-    {
-      "type": "select",
-      "id": "heading_size_desktop",
-      "label": "Heading Size (Desktop)",
-      "options": [
-        { "value": "md:text-xs", "label": "Extra Small" },
-        { "value": "md:text-sm", "label": "Small" },
-        { "value": "md:text-base", "label": "Base" },
-        { "value": "md:text-lg", "label": "Large" },
-        { "value": "md:text-xl", "label": "Extra Large" },
-        { "value": "md:text-2xl", "label": "2X Large" },
-        { "value": "md:text-3xl", "label": "3X Large" },
-        { "value": "md:text-4xl", "label": "4X Large" },
-        { "value": "md:text-5xl", "label": "5X Large" },
-        { "value": "md:text-6xl", "label": "6X Large" }
-      ],
-      "default": "md:text-3xl"
-    },
-    {
-      "type": "select",
-      "id": "heading_weight",
-      "label": "Heading Weight",
-      "options": [
-        { "value": "font-light", "label": "Light" },
-        { "value": "font-normal", "label": "Normal" },
-        { "value": "font-medium", "label": "Medium" },
-        { "value": "font-bold", "label": "Bold" }
-      ],
-      "default": "font-normal"
-    },
-    {
-      "type": "select",
-      "id": "heading_align_mobile",
-      "label": "Heading Alignment (Mobile)",
-      "options": [
-        { "value": "text-left", "label": "Left" },
-        { "value": "text-center", "label": "Center" },
-        { "value": "text-right", "label": "Right" }
-      ],
-      "default": "text-left"
-    },
-    {
-      "type": "select",
-      "id": "heading_align_desktop",
-      "label": "Heading Alignment (Desktop)",
-      "options": [
-        { "value": "md:text-left", "label": "Left" },
-        { "value": "md:text-center", "label": "Center" },
-        { "value": "md:text-right", "label": "Right" }
-      ],
-      "default": "md:text-left"
-    },
-    {
-      "type": "header",
-      "content": "Collection"
+      "default": "Featured"
     },
     {
       "type": "collection",
@@ -179,109 +66,39 @@
     {
       "type": "range",
       "id": "products_shown",
-      "min": 3,
-      "max": 20,
+      "label": "Products shown",
+      "min": 2,
+      "max": 12,
       "step": 1,
-      "unit": "pds",
-      "label": "Products to show",
-      "default": 4
+      "default": 8
+    },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "Columns (desktop)",
+      "options": [
+        { "value": "md:grid-cols-2", "label": "2" },
+        { "value": "md:grid-cols-3", "label": "3" },
+        { "value": "md:grid-cols-4", "label": "4" }
+      ],
+      "default": "md:grid-cols-4"
     },
     {
       "type": "checkbox",
-      "id": "show_product_count",
-      "label": "Show product count",
-      "default": true
-    },
-    {
-      "type": "header",
-      "content": "Button"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_button_mobile",
-      "label": "Show button (Mobile)",
-      "default": false
-    },
-    {
-      "type": "checkbox",
-      "id": "show_button_desktop",
-      "label": "Show button (Desktop)",
+      "id": "show_view_all",
+      "label": "Show view all link",
       "default": true
     },
     {
       "type": "text",
       "id": "button_label",
-      "label": "Button label",
-      "default": "View all",
-      "visible_if": "{{ section.settings.show_button_mobile == true or section.settings.show_button_desktop == true }}"
-    },
-    {
-      "type": "select",
-      "id": "button_style",
-      "label": "Button Style",
-      "options": [
-        {
-          "value": "btn--primary",
-          "label": "Primary"
-        },
-        {
-          "value": "btn--secondary",
-          "label": "Secondary"
-        },
-        {
-          "value": "btn--custom",
-          "label": "Custom"
-        }
-      ],
-      "default": "btn--primary",
-      "visible_if": "{{ section.settings.show_button_mobile == true or section.settings.show_button_desktop == true }}"
-    },
-    {
-      "type": "color",
-      "id": "custom_bg_color",
-      "label": "Custom Background",
-      "visible_if": "{{ section.settings.button_style == 'btn--custom' }}"
-    },
-    {
-      "type": "color",
-      "id": "custom_text_color",
-      "label": "Custom Text Color",
-      "visible_if": "{{ section.settings.button_style == 'btn--custom' }}"
-    },
-    {
-      "type": "color",
-      "id": "custom_border_color",
-      "label": "Custom Border Color",
-      "visible_if": "{{ section.settings.button_style == 'btn--custom' }}"
-    },
-    {
-      "type": "color",
-      "id": "custom_hover_color",
-      "label": "Custom Hover Background",
-      "visible_if": "{{ section.settings.button_style == 'btn--custom' }}"
-    },
-    {
-      "type": "color",
-      "id": "custom_hover_border_color",
-      "label": "Custom Hover Border",
-      "visible_if": "{{ section.settings.button_style == 'btn--custom' }}"
-    },
-    {
-      "type": "range",
-      "id": "custom_border_width",
-      "label": "Custom Border Width",
-      "min": 0,
-      "max": 5,
-      "step": 1,
-      "unit": "px",
-      "default": 1,
-      "visible_if": "{{ section.settings.button_style == 'btn--custom' }}"
+      "label": "View all label",
+      "default": "View all"
     }
   ],
   "presets": [
     {
-      "name": "Featured Collection",
-      "settings": {}
+      "name": "Featured Collection"
     }
   ]
 }

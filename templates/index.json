@@ -1,20 +1,40 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
-    "main": {
-      "type": "hello-world",
-      "settings": {}
+    "featured-collection": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "Featured",
+        "products_shown": 8,
+        "columns": "md:grid-cols-4",
+        "show_view_all": true
+      }
+    },
+    "collection-list": {
+      "type": "collection-list",
+      "blocks": {
+        "block-1": { "type": "collection", "settings": { "custom_title": "Bestsellers", "button_text": "Shop now" } },
+        "block-2": { "type": "collection", "settings": { "custom_title": "New arrivals", "button_text": "Shop now" } },
+        "block-3": { "type": "collection", "settings": { "custom_title": "Sale", "button_text": "Shop now" } }
+      },
+      "block_order": ["block-1", "block-2", "block-3"],
+      "settings": {
+        "title": "Shop by collection",
+        "columns_mobile": "grid-cols-1",
+        "columns_desktop": "md:grid-cols-3"
+      }
+    },
+    "text-banner": {
+      "type": "text-banner",
+      "settings": {
+        "subheading": "About",
+        "heading": "Built for speed",
+        "text": "<p>A minimal Shopify theme starter — Tailwind, Vite, and a clean set of building blocks.</p>"
+      }
     }
   },
   "order": [
-    "main"
+    "featured-collection",
+    "collection-list",
+    "text-banner"
   ]
 }

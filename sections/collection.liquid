@@ -11,7 +11,7 @@
       {%- endif -%}
       {%- if section.settings.show_product_count -%}
         <p class="text-sm text-gray-600 mt-2">
-          {{ 'products.facets.product_count' | t: count: collection.products_count, total: collection.products_count | default: '%{count} of %{total} products' }}
+          {{ collection.products_count }} {% if collection.products_count == 1 %}product{% else %}products{% endif %}
         </p>
       {%- endif -%}
     </header>

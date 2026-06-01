@@ -4,6 +4,11 @@
     "not_found": "Page not found.",
     "back_to_shopping": "Back to shopping"
   },
+  "accessibility": {
+    "play_video": "Play video",
+    "close": "Close",
+    "loading": "Loading"
+  },
   "blog": {
     "article_comments": "Comments",
     "article_metadata_html": "{{ date }} by {{ author }}",
@@ -15,9 +20,16 @@
   },
   "cart": {
     "checkout": "Checkout",
-    "title": "Cart",
-    "update": "Update",
-    "remove": "Remove"
+    "continue_browsing": "Continue shopping",
+    "empty": "Your cart is empty.",
+    "remove": "Remove",
+    "shipping_at_checkout": "Shipping calculated at checkout.",
+    "subtotal": "Subtotal",
+    "title": "Your cart",
+    "update": "Update cart"
+  },
+  "collections": {
+    "title": "Collections"
   },
   "customers": {
     "login": {
@@ -27,8 +39,20 @@
       "title": "Login"
     }
   },
-  "collections": {
-    "title": "Collections"
+  "general": {
+    "breadcrumbs": {
+      "home": "Home"
+    },
+    "password_page": {
+      "login_form_heading": "Are you the store owner?",
+      "login_form_password_button": "Enter using password",
+      "login_form_submit": "Enter",
+      "submit": "Submit"
+    },
+    "search": {
+      "placeholder": "Search products…",
+      "search": "Search"
+    }
   },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",
@@ -37,10 +61,19 @@
     "expires_on": "Expires on {{ expires_on }}",
     "use_at_checkout": "Use this gift card at checkout"
   },
+  "newsletter": {
+    "button_label": "Subscribe"
+  },
   "password": {
     "title": "This shop is private",
     "password": "Password",
     "enter": "Enter"
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to cart",
+      "sold_out": "Sold out"
+    }
   },
   "search": {
     "title": "Search",
@@ -48,5 +81,20 @@
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "sections": {
+    "collection_template": {
+      "browse_collections": "Browse collections",
+      "empty": "No products yet",
+      "empty_text": "Check back soon."
+    }
+  },
+  "templates": {
+    "search": {
+      "browse_all_products": "Browse all products",
+      "no_results": "No results for",
+      "no_results_text": "Try a different search.",
+      "results_with_count": "{{ count }} results for \"{{ terms }}\""
+    }
   }
 }

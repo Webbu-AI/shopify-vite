@@ -144,3 +144,4 @@ dist
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+.playwright-mcp/

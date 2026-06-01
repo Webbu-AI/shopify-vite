@@ -96,9 +96,9 @@
             {% if current_variant.available == false %}disabled{% endif %}
           >
             {%- if current_variant.available -%}
-              {{ 'products.product.add_to_cart' | t | default: 'Add to cart' }}
+              Add to cart
             {%- else -%}
-              {{ 'products.product.sold_out' | t | default: 'Sold out' }}
+              Sold out
             {%- endif -%}
           </button>
 
