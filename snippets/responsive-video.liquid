@@ -1,0 +1,193 @@
+<!-- snippets/responsive-video.liquid -->
+{% comment %}theme-check-disable RemoteAsset{% endcomment %}
+{% doc %}
+  Renders a responsive video element.
+
+  @param {object} video - The video object
+  @param {object} [mobile_video] - The mobile video object
+  @param {object} [large_video] - The large video object
+  @param {object} [poster_image] - The poster image object
+  @param {object} [mobile_poster_image] - The mobile poster image object
+  @param {object} [large_poster_image] - The large poster image object
+  @param {boolean} [autoplay] - Whether to autoplay the video (default: true)
+  @param {string} [lazy_type] - The load type ('dom', 'load', 'manual')
+  @param {string} [poster_lazy_type] - The image load type ('dom', 'load', 'manual')
+  @param {boolean} [loop_video] - Whether to loop the video
+  @param {boolean} [show_controls] - Whether to show the controls
+  @param {string} [class] - The classes to add to the responsive video wrapper
+
+  @example
+  {%- render 'responsive-video', video: video -%}
+  @example
+  {%- render 'responsive-video', video: video, lazy_type: lazy_type, loop_video: loop_video -%}
+{% enddoc %}
+
+{%- liquid
+  # default values
+  assign poster_image = poster_image | default: video.preview_image
+  assign mobile_poster_image = mobile_poster_image | default: mobile_video.preview_image
+  assign large_poster_image = large_poster_image | default: large_video.preview_image
+  assign loop_video = loop_video | default: true, allow_false: true
+  assign autoplay = autoplay | default: true, allow_false: true
+  assign show_controls = show_controls | default: true, allow_false: true
+
+  assign poster_lazy_type = poster_lazy_type | default: lazy_type
+
+  if lazy_type == 'manual' and poster_lazy_type == 'manual'
+    assign poster_lazy_type = 'load'
+  endif
+
+  # Create URLs from video assets
+  assign poster_image = poster_image | default: video.preview_image
+  if video != blank
+    for source in video.sources
+      if source.format == 'mp4'
+        assign video_url = source.url
+      endif
+    endfor
+  endif
+
+  # Determine aspect ratios for different sources
+  assign aspect_ratio = video.aspect_ratio | default: 1.77
+  assign mobile_aspect_ratio = mobile_video.aspect_ratio | default: aspect_ratio
+  assign large_aspect_ratio = large_video.aspect_ratio | default: aspect_ratio
+-%}
+
+<responsive-video
+  class="{{ class }}"
+
+  {% if lazy_type -%}
+    data-lazy-type="{{ lazy_type }}"
+  {%- endif -%}
+
+  {% if autoplay %}
+    autoplay
+  {% endif %}
+>
+  <div class="responsive-video-wrapper relative w-full overflow-hidden cursor-pointer">
+    <!-- Poster Image - Sets Aspect Ratio -->
+    <div
+      class="
+        poster-image relative w-full transition-opacity duration-500
+        image image--animate animation--lazy-load
+      "
+    >
+      {%- render 'pictures',
+        breakpoints: '719, 1600',
+        image: poster_image,
+        image_719: mobile_poster_image,
+        image_1600: large_poster_image,
+        sizes: '100vw',
+        widths: '390, 719, 1200, 1600, 1920, 3000',
+        section_index: section.index,
+        lazy_type: poster_lazy_type
+      -%}
+    </div>
+    {% if video_url != blank %}
+      {%- capture lazy_attributes -%}
+        {% if lazy_type -%}
+          data-load-{{ lazy_type }}
+          preload="none"
+        {%- endif -%}
+
+        {% comment %} {%- if lazy_type != blank %}
+          fetchpriority="low"
+        {% endif -%} {% endcomment %}
+      {%- endcapture -%}
+      <!-- Video Element - Hidden Until Loaded -->
+      <video
+        {% if loop_video %}
+          loop
+        {% endif %}
+
+        {% if autoplay %}
+          autoplay
+        {% endif %}
+
+        {{ lazy_attributes }}
+
+        muted
+        playsinline
+        class="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-500 opacity-0"
+      >
+        <template data-sources>
+          {%- for source in video.sources -%}
+            {%- if source.format == 'mp4' -%}
+              <source
+                data-src="{{ source.url }}"
+                type="{{ source.mime_type }}"
+                data-aspect-ratio="{{ aspect_ratio }}"
+              >
+            {%- endif -%}
+          {%- endfor -%}
+          {%- for source in mobile_video.sources -%}
+            {%- if source.format == 'mp4' -%}
+              <source
+                data-src="{{ source.url }}"
+                type="{{ source.mime_type }}"
+                media="(max-width: 719px)"
+                data-aspect-ratio="{{ mobile_aspect_ratio }}"
+              >
+            {%- endif -%}
+          {%- endfor -%}
+          {%- for source in large_video.sources -%}
+            {%- if source.format == 'mp4' -%}
+              <source
+                data-src="{{ source.url }}"
+                type="{{ source.mime_type }}"
+                media="(min-width: 1600px)"
+                data-aspect-ratio="{{ large_aspect_ratio }}"
+              >
+            {%- endif -%}
+          {%- endfor -%}
+        </template>
+      </video>
+
+      <!-- Video Controls -->
+      {%- if show_controls -%}
+        <div
+          class="
+            absolute top-0 left-0 w-full h-full flex items-center
+            justify-center z-10 pointer-events-none
+          "
+        >
+          <div
+            class="
+              text-white/70 w-16 h-16 flex items-center justify-center
+              transition-opacity duration-300
+            "
+            data-play-toggle
+            aria-label="{{ 'accessibility.play_video' | t }}"
+          >
+            <div class="w-8 md:w-14">
+              <svg
+                data-icon-play
+                class="icon icon-play w-full h-auto"
+                viewBox="0 0 102 118"
+              >
+                <polygon fill="currentColor" points="0,0 102,59 0,118" />
+              </svg>
+            </div>
+          </div>
+
+          <button
+            class="
+              absolute bottom-3 right-3 text-white
+              rounded-full w-10 h-10 flex items-center justify-center cursor-pointer
+              opacity-70 hover:opacity-100 transition-opacity duration-300 pointer-events-auto
+            "
+            data-sound-toggle
+            aria-label="Toggle sound"
+          >
+            <div data-icon-sound-on class="hidden">
+              {% render 'icon', icon: 'sound' %}
+            </div>
+            <div data-icon-sound-off>
+              {% render 'icon', icon: 'sound-off' %}
+            </div>
+          </button>
+        </div>
+      {%- endif -%}
+    {% endif %}
+  </div>
+</responsive-video>

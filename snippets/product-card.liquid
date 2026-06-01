@@ -1,0 +1,107 @@
+{%- comment -%}theme-check-disable LiquidTag{%- endcomment -%}
+{% doc %}
+  Renders a product card with image, brand, title and price.
+
+  @param {object} product - Product object
+  @param {object} [collection] - Collection object for "within collection" URLs
+  @param {boolean} [fetch_safe] - Render as plain div instead of <product-card> custom element
+
+  @example
+  {% render 'product-card', product: product %}
+  {% render 'product-card', product: product, collection: collection %}
+{% enddoc %}
+
+{%- liquid
+  if collection and settings.card_url_within_coll and product.collections contains collection
+    assign product_url = product.url | within: collection
+  else
+    assign product_url = product.url
+  endif
+
+  if product_url contains '?'
+    assign product_url = product_url | split: '?' | first
+  endif
+
+  if fetch_safe
+    assign html_tag = 'div'
+  else
+    assign html_tag = 'product-card'
+  endif
+
+  assign brand = product.vendor
+-%}
+
+{%- if product and product != empty -%}
+  <{{ html_tag }} class="relative bg-white rounded-lg">
+    {%- comment -%} Product Image {%- endcomment -%}
+    <div class="mb-2">
+      <a
+        href="{{ product_url }}"
+        aria-label="{{ product.title | escape }}"
+        class="block"
+      >
+        <div class="bg-gray-50 rounded-lg overflow-hidden md:p-12 p-4 group">
+          {%- if product.featured_media -%}
+            {%- capture sizes -%}
+              {%- render 'sizes-attribute', grid: true, min: 1, sm: 2, lg: 3, xl: 4 -%}
+            {%- endcapture -%}
+            <div class="w-full media pb-[120%] group-hover:scale-105 transition-all duration-[600ms]">
+              {% render 'image',
+                image: product.featured_media.preview_image,
+                widths: '300, 400, 500, 600, 800',
+                src_width: 400,
+                sizes: sizes,
+                class: 'img-fit'
+              %}
+            </div>
+          {%- else -%}
+            <div class="w-full h-full flex items-center justify-center">
+              {{ 'image' | placeholder_svg_tag: 'w-full h-full object-contain text-gray-300' }}
+            </div>
+          {%- endif -%}
+        </div>
+      </a>
+    </div>
+
+    {%- comment -%} Product Info {%- endcomment -%}
+    <div class="flex flex-col gap-1 p-2 pt-0">
+      {%- if brand and brand != blank -%}
+        <p class="text-xs text-gray-600 uppercase tracking-widest -mb-1">
+          {{ brand }}
+        </p>
+      {%- endif -%}
+
+      <h3 class="text-xl md:text-2xl font-normal text-black leading-tight">
+        <a href="{{ product_url }}" class="hover:text-gray-700 transition-colors">
+          {{ product.title | escape }}
+        </a>
+      </h3>
+
+      <div>
+        <div class="text-lg md:text-xl font-normal text-black">
+          {%- render 'price', product: product -%}
+        </div>
+      </div>
+    </div>
+  </{{ html_tag }}>
+{%- else -%}
+  <div class="relative bg-white p-6 rounded-lg">
+    <div class="mb-8">
+      <div class="aspect-square bg-gray-50 rounded-lg overflow-hidden">
+        <div class="w-full h-full flex items-center justify-center">
+          {%- capture placeholder_name -%}product-{{ 'now' | date: '%N' | modulo: 6 | plus: 1 }}{%- endcapture -%}
+          {{ placeholder_name | placeholder_svg_tag: 'w-full h-full object-contain text-gray-300' }}
+        </div>
+      </div>
+    </div>
+    <div class="space-y-2">
+      <p class="text-sm text-gray-600 uppercase tracking-wide">Brand</p>
+      <h3 class="text-2xl font-bold text-black leading-tight">Product Name</h3>
+      <div class="py-2">
+        <div class="text-xl font-bold text-black">
+          {{ 123400 | money }}
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endif -%}

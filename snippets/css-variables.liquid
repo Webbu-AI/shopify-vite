@@ -1,18 +1,66 @@
 {% style %}
-  {% # Loads all font variantions with display: swap %}
-  {{ settings.type_primary_font | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {% # Load font variations with display: swap %}
+  {{ settings.font_body | font_face: font_display: 'swap' }}
+  {{ settings.font_body | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
+  {{ settings.font_body | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {{ settings.font_heading | font_face: font_display: 'swap' }}
+  {{ settings.font_logo | font_face: font_display: 'swap' }}
 
   :root {
-    --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
-    --font-primary--style: {{ settings.type_primary_font.style }};
-    --font-primary--weight: {{ settings.type_primary_font.weight }};
-    --page-width: {{ settings.max_page_width }};
-    --page-margin: {{ settings.min_page_margin }}px;
-    --color-background: {{ settings.background_color }};
-    --color-foreground: {{ settings.foreground_color }};
-    --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
+    /* Fonts */
+    --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
+    --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
+    --font-logo: {{ settings.font_logo.family }}, {{ settings.font_logo.fallback_families }};
+    --font-body-weight: {{ settings.font_body.weight }};
+    --font-heading-weight: {{ settings.font_heading.weight }};
+
+    /* Font sizes */
+    --logo-base-size: {{ settings.logo_base_size }}px;
+    --heading-base-size: {{ settings.heading_base_size }}px;
+    --body-base-size: {{ settings.body_base_size }}px;
+    --navigation-base-size: {{ settings.navigation_base_size }}px;
+    --heading-mobile-scale: {{ settings.heading_mobile_base_scale }};
+    --body-mobile-scale: {{ settings.body_mobile_base_scale }};
+
+    /* Letter spacing (em x 1000) */
+    --logo-letter-spacing: {{ settings.logo_letter_spacing | divided_by: 1000.0 }}em;
+    --heading-letter-spacing: {{ settings.heading_letter_spacing | divided_by: 1000.0 }}em;
+    --body-letter-spacing: {{ settings.body_letter_spacing | divided_by: 1000.0 }}em;
+    --navigation-letter-spacing: {{ settings.navigation_letter_spacing | divided_by: 1000.0 }}em;
+    --buttons-letter-spacing: {{ settings.buttons_letter_spacing | divided_by: 1000.0 }}em;
+
+    /* Layout */
+    --base-gap: {{ settings.base_gap }}px;
+
+    /* Background colors */
+    --color-background: {{ settings.color_background_body }};
+    --color-background-body: {{ settings.color_background_body }};
+    --color-header-bg: {{ settings.color_header_bg }};
+    --color-background-footer: {{ settings.color_background_footer }};
+
+    /* Text colors */
+    --color-text: {{ settings.color_text }};
+    --color-text-link: {{ settings.color_text_link }};
+    --color-header-text: {{ settings.color_header_text }};
+    --color-text-footer: {{ settings.color_text_footer }};
+
+    /* Borders */
+    --color-border: {{ settings.color_border }};
+
+    /* Primary buttons */
+    --color-primary-button-bg: {{ settings.color_primary_button_bg }};
+    --color-primary-button-text: {{ settings.color_primary_button_text }};
+    --color-primary-button-border: {{ settings.color_primary_button_border }};
+    --color-primary-button-hover: {{ settings.color_primary_button_hover }};
+    --color-primary-button-hover-border: {{ settings.color_primary_button_hover_border }};
+    --primary-button-border-width: {{ settings.primary_button_border_width }}px;
+
+    /* Secondary buttons */
+    --color-secondary-button-bg: {{ settings.color_secondary_button_bg }};
+    --color-secondary-button-text: {{ settings.color_secondary_button_text }};
+    --color-secondary-button-border: {{ settings.color_secondary_button_border }};
+    --color-secondary-button-hover: {{ settings.color_secondary_button_hover }};
+    --color-secondary-button-hover-border: {{ settings.color_secondary_button_hover_border }};
+    --secondary-button-border-width: {{ settings.secondary_button_border_width }}px;
   }
 {% endstyle %}

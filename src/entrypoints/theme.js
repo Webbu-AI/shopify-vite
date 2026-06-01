@@ -1,14 +1,10 @@
-/* 
-import '../scripts/utils/theme-functions.js';
-import '../scripts/utils/css-helpers.js';
-*/
-
 // Initialize theme object
 window.theme = window.theme || {};
 
-import '../scripts/components/';
+import '../scripts/utils/theme-functions.js';
+import '../scripts/utils/lazy-images.js';
 import '../scripts/utils/helpers';
-import '../scripts/utils/bot-detector.js';
+import '../scripts/components/';
 
 console.log('main.bundle.js loaded');
 
