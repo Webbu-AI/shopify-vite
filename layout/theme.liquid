@@ -33,6 +33,14 @@
 
     <script>
       document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+      window.theme = window.theme || {};
+      window.theme.routes = {
+        cartAdd: '{{ routes.cart_add_url }}',
+        cartChange: '{{ routes.cart_change_url }}',
+        cartUpdate: '{{ routes.cart_update_url }}',
+        cart: '{{ routes.cart_url }}',
+        search: '{{ routes.search_url }}'
+      };
     </script>
 
     <script src="{{ 'main.bundle.js' | asset_url }}" defer="defer"></script>
@@ -56,5 +64,7 @@
     {%- if request.path != '/challenge' -%}
       {% sections 'footer-group' %}
     {%- endif -%}
+
+    {% sections 'aside-group' %}
   </body>
 </html>

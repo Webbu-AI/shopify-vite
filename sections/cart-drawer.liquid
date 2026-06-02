@@ -1,0 +1,136 @@
+<cart-drawer class="drawer" data-toggle-attribute="data-toggle-cart">
+  <div class="h-full grid grid-rows-[auto_1fr_auto]">
+    {%- comment -%} Header {%- endcomment -%}
+    <div class="flex justify-between items-center px-6 py-5 border-b border-[var(--color-border)]">
+      <h2 class="text-lg font-medium">
+        {{ 'cart.title' | t | default: 'Your cart' }}
+        <span class="text-gray-500 font-normal" data-cart-count-title>({{ cart.item_count }})</span>
+      </h2>
+      <button
+        type="button"
+        class="w-8 h-8 flex items-center justify-center tap-target hover:bg-gray-100 rounded transition-colors"
+        data-toggle-cart
+        aria-label="{{ 'accessibility.close' | t | default: 'Close' }}"
+      >
+        {%- render 'icon', icon: 'close', class: 'w-5 h-5' -%}
+      </button>
+    </div>
+
+    {%- comment -%} Items {%- endcomment -%}
+    <div class="overflow-y-auto">
+      {%- if cart.item_count == 0 -%}
+        <div class="flex flex-col items-center justify-center h-full px-6 py-16 text-center">
+          <div class="w-16 h-16 mb-5 text-gray-300">
+            {%- render 'icon', icon: 'cart', class: 'w-full h-full' -%}
+          </div>
+          <p class="text-gray-600 mb-6">
+            {{ 'cart.empty' | t | default: 'Your cart is empty.' }}
+          </p>
+          <a
+            href="{{ routes.all_products_collection_url }}"
+            class="btn btn--primary"
+            data-toggle-cart
+          >
+            {{ 'cart.continue_browsing' | t | default: 'Continue shopping' }}
+          </a>
+        </div>
+      {%- else -%}
+        <form action="{{ routes.cart_url }}" method="post" id="cart-drawer-form" novalidate>
+          <ul class="divide-y divide-[var(--color-border)] px-6">
+            {%- for item in cart.items -%}
+              <li class="py-5 flex gap-4">
+                <a href="{{ item.url }}" class="flex-shrink-0 block w-20" data-toggle-cart>
+                  <div class="media pb-[100%] bg-gray-50 rounded">
+                    {%- if item.image -%}
+                      {% render 'image', image: item.image, src_width: 160, sizes: '80px', class: 'img-fit' %}
+                    {%- endif -%}
+                  </div>
+                </a>
+
+                <div class="flex-1 min-w-0">
+                  <div class="flex justify-between items-start gap-3">
+                    <div class="min-w-0">
+                      <a
+                        href="{{ item.url }}"
+                        class="text-sm font-medium no-decoration hover:opacity-70 line-clamp-2"
+                        data-toggle-cart
+                      >
+                        {{ item.product.title }}
+                      </a>
+                      {%- unless item.product.has_only_default_variant -%}
+                        <p class="text-xs text-gray-600 mt-1">{{ item.variant.title }}</p>
+                      {%- endunless -%}
+                    </div>
+                    <button
+                      type="button"
+                      class="js-cart-remove text-gray-400 hover:text-black transition-colors p-1 -mt-1 -mr-1"
+                      data-index="{{ forloop.index }}"
+                      aria-label="{{ 'cart.remove' | t | default: 'Remove' }}"
+                    >
+                      {%- render 'icon', icon: 'close', class: 'w-4 h-4' -%}
+                    </button>
+                  </div>
+
+                  <div class="flex items-center justify-between mt-3">
+                    <quantity-input class="inline-flex items-center border border-[var(--color-border)] rounded">
+                      <button type="button" name="minus" class="w-7 h-7 flex items-center justify-center hover:bg-gray-100" aria-label="Decrease">
+                        {%- render 'icon', icon: 'minus', class: 'w-3 h-3' -%}
+                      </button>
+                      <input
+                        type="number"
+                        name="updates[]"
+                        value="{{ item.quantity }}"
+                        min="0"
+                        data-index="{{ forloop.index }}"
+                        class="input w-9 h-7 text-sm text-center"
+                        aria-label="Quantity"
+                      >
+                      <button type="button" name="plus" class="w-7 h-7 flex items-center justify-center hover:bg-gray-100" aria-label="Increase">
+                        {%- render 'icon', icon: 'plus', class: 'w-3 h-3' -%}
+                      </button>
+                    </quantity-input>
+
+                    <p class="text-sm font-medium whitespace-nowrap">{{ item.final_line_price | money }}</p>
+                  </div>
+                </div>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </form>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Footer {%- endcomment -%}
+    {%- if cart.item_count > 0 -%}
+      <div class="border-t border-[var(--color-border)] px-6 py-5 bg-gray-50 space-y-4">
+        <div class="flex justify-between items-baseline">
+          <span class="text-sm font-medium">
+            {{ 'cart.subtotal' | t | default: 'Subtotal' }}
+          </span>
+          <span class="text-base font-semibold">{{ cart.total_price | money }}</span>
+        </div>
+        <p class="text-xs text-gray-600">
+          {{ 'cart.shipping_at_checkout' | t | default: 'Shipping calculated at checkout.' }}
+        </p>
+        <button type="submit" name="checkout" form="cart-drawer-form" class="btn btn--primary w-full">
+          {{ 'cart.checkout' | t | default: 'Checkout' }}
+        </button>
+      </div>
+    {%- endif -%}
+  </div>
+</cart-drawer>
+
+<div class="overlay" data-toggle-cart></div>
+
+{% schema %}
+{
+  "name": "Cart Drawer",
+  "limit": 1,
+  "tag": "aside",
+  "class": "drawer-section",
+  "enabled_on": {
+    "groups": ["aside"]
+  },
+  "settings": []
+}
+{% endschema %}

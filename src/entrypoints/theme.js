@@ -3,6 +3,7 @@ window.theme = window.theme || {};
 
 import '../scripts/utils/theme-functions.js';
 import '../scripts/utils/lazy-images.js';
+import '../scripts/utils/drawer-toggle.js';
 import '../scripts/utils/helpers';
 import '../scripts/components/';
 

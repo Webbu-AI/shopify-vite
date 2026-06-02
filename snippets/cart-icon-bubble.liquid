@@ -1,0 +1,17 @@
+{% doc %}
+  Renders the cart icon with item-count badge. Rendered inside the header
+  cart toggle button, and refreshed via the Shopify section-render API
+  (key: `cart-icon-bubble`) after an add-to-cart.
+{% enddoc %}
+
+<span class="relative inline-flex items-center justify-center">
+  {%- render 'icon', icon: 'cart' -%}
+  {%- if cart.item_count > 0 -%}
+    <sup
+      class="absolute -top-1 -right-2 bg-black text-white text-[10px] leading-none rounded-full size-[18px] flex items-center justify-center"
+      data-cart-count
+    >
+      {{ cart.item_count }}
+    </sup>
+  {%- endif -%}
+</span>

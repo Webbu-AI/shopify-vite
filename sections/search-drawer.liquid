@@ -1,0 +1,89 @@
+{%- liquid
+  assign quick_links = section.settings.quick_links
+-%}
+
+<search-drawer class="drawer" data-toggle-attribute="data-toggle-search">
+  <div class="h-full grid grid-rows-[auto_1fr]">
+    {%- comment -%} Header + form {%- endcomment -%}
+    <div class="border-b border-[var(--color-border)]">
+      <div class="flex justify-between items-center px-6 py-5">
+        <h2 class="text-lg font-medium">{{ 'general.search.search' | t | default: 'Search' }}</h2>
+        <button
+          type="button"
+          class="w-8 h-8 flex items-center justify-center tap-target hover:bg-gray-100 rounded transition-colors"
+          data-toggle-search
+          aria-label="{{ 'accessibility.close' | t | default: 'Close' }}"
+        >
+          {%- render 'icon', icon: 'close', class: 'w-5 h-5' -%}
+        </button>
+      </div>
+
+      <form action="{{ routes.search_url }}" method="get" role="search" class="px-6 pb-5">
+        <input type="hidden" name="options[prefix]" value="last">
+        <input type="hidden" name="type" value="product">
+        <div class="relative">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+            {%- render 'icon', icon: 'search', class: 'w-5 h-5' -%}
+          </span>
+          <input
+            type="search"
+            name="q"
+            class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-[var(--color-border)] rounded-lg text-sm placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"
+            placeholder="{{ 'general.search.placeholder' | t | default: 'Search for products...' }}"
+            autocomplete="off"
+            data-search-input
+          >
+        </div>
+      </form>
+    </div>
+
+    {%- comment -%} Body — quick links + (eventually) results {%- endcomment -%}
+    <div class="overflow-y-auto px-6 py-6">
+      {%- if quick_links != blank and quick_links.links.size > 0 -%}
+        <p class="text-xs uppercase tracking-widest text-gray-500 mb-3">
+          {{ section.settings.quick_links_heading | default: 'Popular searches' }}
+        </p>
+        <ul class="space-y-1">
+          {%- for link in quick_links.links -%}
+            <li>
+              <a
+                href="{{ link.url }}"
+                class="flex items-center gap-2 py-2 text-sm no-decoration hover:opacity-70 transition-opacity"
+              >
+                {%- render 'icon', icon: 'chevron-right-small', class: 'w-3 h-3 text-gray-400' -%}
+                {{ link.title }}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</search-drawer>
+
+<div class="overlay" data-toggle-search></div>
+
+{% schema %}
+{
+  "name": "Search Drawer",
+  "limit": 1,
+  "tag": "aside",
+  "class": "drawer-section",
+  "enabled_on": {
+    "groups": ["aside"]
+  },
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "quick_links",
+      "label": "Quick links menu"
+    },
+    {
+      "type": "text",
+      "id": "quick_links_heading",
+      "label": "Quick links heading",
+      "default": "Popular searches"
+    }
+  ]
+}
+{% endschema %}

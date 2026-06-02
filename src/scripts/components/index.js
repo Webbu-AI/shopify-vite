@@ -11,5 +11,7 @@ import './load-page-content.js';
 import './quantity-input.js';
 import './infinite-collection.js';
 import './flickity-responsive.js';
+import './cart-drawer.js';
+import './search-drawer.js';
 
 import './product/';

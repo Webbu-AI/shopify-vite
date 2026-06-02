@@ -1,0 +1,18 @@
+{
+  "type": "aside",
+  "name": "Aside",
+  "sections": {
+    "cart-drawer": {
+      "type": "cart-drawer",
+      "settings": {}
+    },
+    "search-drawer": {
+      "type": "search-drawer",
+      "settings": {}
+    }
+  },
+  "order": [
+    "cart-drawer",
+    "search-drawer"
+  ]
+}
