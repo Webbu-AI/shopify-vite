@@ -1,5 +1,5 @@
-import { initLazyImages } from '~/scripts/utils/lazy-images.js';
-import { initLazyScript } from '../../utils/theme-functions';
+import { initLazyImages } from '~/scripts/utils/helpers/lazy-media.js';
+import { initLazyScript } from '~/scripts/utils/theme-functions.js';
 
 class ProductRecommendations extends HTMLElement {
     constructor() {
@@ -8,11 +8,8 @@ class ProductRecommendations extends HTMLElement {
     }
 
     async init() {
-        const productId = this.dataset.productId || window.meta.product.id;
-
+        const productId = this.dataset.productId;
         if (!productId) return;
-
-        console.log('init', productId);
 
         try {
             const response = await fetch(`${this.dataset.url}&product_id=${productId}`);
@@ -29,7 +26,7 @@ class ProductRecommendations extends HTMLElement {
 
             initLazyImages();
         } catch (error) {
-            console.log(error);
+            console.error('Product recommendations failed to load', error);
         }
     }
 }

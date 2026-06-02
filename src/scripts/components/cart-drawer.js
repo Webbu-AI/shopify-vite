@@ -9,26 +9,33 @@ class CartDrawer extends HTMLElement {
         super();
         this.section = this.closest('.shopify-section');
         this.sectionId = this.section?.id.replace('shopify-section-', '');
-        this.bindEvents();
-    }
 
-    bindEvents() {
-        document.addEventListener('on:cart:add', (event) => this.refresh(event.detail?.sections));
-
-        this.addEventListener('click', (event) => {
+        this.handleCartAdd = (event) => this.refresh(event.detail?.sections);
+        this.handleClick = (event) => {
             const removeBtn = event.target.closest('.js-cart-remove');
             if (removeBtn) {
                 event.preventDefault();
                 this.changeLine(parseInt(removeBtn.dataset.index, 10), 0);
             }
-        });
-
-        this.addEventListener('change', (event) => {
+        };
+        this.handleChange = (event) => {
             const input = event.target.closest('input[name="updates[]"]');
             if (input) {
                 this.changeLine(parseInt(input.dataset.index, 10), parseInt(input.value, 10));
             }
-        });
+        };
+    }
+
+    connectedCallback() {
+        document.addEventListener('on:cart:add', this.handleCartAdd);
+        this.addEventListener('click', this.handleClick);
+        this.addEventListener('change', this.handleChange);
+    }
+
+    disconnectedCallback() {
+        document.removeEventListener('on:cart:add', this.handleCartAdd);
+        this.removeEventListener('click', this.handleClick);
+        this.removeEventListener('change', this.handleChange);
     }
 
     async refresh(sections) {

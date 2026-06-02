@@ -31,8 +31,8 @@
 {%- if use_price_range -%}
   <span class="price-range"> {{ price_range_low | money }} - {{ price_range_high | money }} </span>
 {%- else -%}
-  {%- if compare_at_price < normal_price -%}
-    <span class="price-compare">
+  {%- if compare_at_price > normal_price -%}
+    <span class="price-compare line-through opacity-60">
       {{ compare_at_price | money }}
     </span>
   {%- endif -%}

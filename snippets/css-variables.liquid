@@ -31,6 +31,8 @@
 
     /* Layout */
     --base-gap: {{ settings.base_gap }}px;
+    --page-width: {{ settings.page_width | default: 1440 }}px;
+    --button-radius: {{ settings.button_radius | default: 9999 }}px;
 
     /* Background colors */
     --color-background: {{ settings.color_background_body }};

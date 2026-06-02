@@ -12,6 +12,16 @@
     "settings": [
       {
         "type": "range",
+        "id": "page_width",
+        "min": 1000,
+        "max": 1920,
+        "step": 20,
+        "unit": "px",
+        "label": "Max page width",
+        "default": 1440
+      },
+      {
+        "type": "range",
         "id": "base_gap",
         "min": 15,
         "max": 50,
@@ -21,10 +31,15 @@
         "default": 30
       },
       {
-        "type": "color",
-        "id": "bg_color",
-        "label": "Page background color",
-        "default": "#FFFFFF"
+        "type": "range",
+        "id": "button_radius",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "label": "Button corner radius",
+        "info": "Set to 50 for fully pill-shaped buttons",
+        "default": 50
       },
       {
         "type": "select",

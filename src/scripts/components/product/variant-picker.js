@@ -17,7 +17,6 @@ class VariantPicker extends HTMLElement {
      * @param {object} evt - Event object.
      */
     handleVariantChange(evt) {
-        console.log('handleVariantChange', evt);
         const selectedOptions = this.getSelectedOptions();
         this.variant = null;
 

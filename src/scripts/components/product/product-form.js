@@ -42,10 +42,6 @@ class ProductForm extends HTMLElement {
         formData.append('sections_url', window.location.pathname);
         formData.append('sections', sections);
 
-        if (window.customColor) {
-            formData.append('properties[Color]', window.customColor);
-        }
-
         const fetchRequestOpts = {
             method: 'POST',
             headers: {
@@ -74,7 +70,7 @@ class ProductForm extends HTMLElement {
                 })
             );
         } catch (error) {
-            console.log(error);
+            console.error('Add to cart failed', error);
             this.dispatchEvent(
                 new CustomEvent('on:cart:error', {
                     bubbles: true,

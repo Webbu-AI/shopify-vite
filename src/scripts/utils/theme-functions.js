@@ -266,7 +266,6 @@ export function lockBodyScroll(element) {
     // Save current scroll position before first lock
     if (lockedElements.size === 0) {
         window.unlockedScrollY = window.scrollY;
-        console.log('locking body scroll at', window.unlockedScrollY);
     }
 
     // Lock the scroll on the target element
@@ -290,7 +289,6 @@ export function lockBodyScroll(element) {
 
 export function unlockBodyScroll(element) {
     const targetElement = element || document.body;
-    console.log('unlocking body scroll');
 
     // Enable scroll for the specific element
     enableBodyScroll(targetElement);

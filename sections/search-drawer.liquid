@@ -2,12 +2,18 @@
   assign quick_links = section.settings.quick_links
 -%}
 
-<search-drawer class="drawer" data-toggle-attribute="data-toggle-search">
+<search-drawer
+  class="drawer"
+  data-toggle-attribute="data-toggle-search"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="search-drawer-heading"
+>
   <div class="h-full grid grid-rows-[auto_1fr]">
     {%- comment -%} Header + form {%- endcomment -%}
     <div class="border-b border-[var(--color-border)]">
       <div class="flex justify-between items-center px-6 py-5">
-        <h2 class="text-lg font-medium">{{ 'general.search.search' | t | default: 'Search' }}</h2>
+        <h2 id="search-drawer-heading" class="text-lg font-medium">{{ 'general.search.search' | t | default: 'Search' }}</h2>
         <button
           type="button"
           class="w-8 h-8 flex items-center justify-center tap-target hover:bg-gray-100 rounded transition-colors"
@@ -21,11 +27,15 @@
       <form action="{{ routes.search_url }}" method="get" role="search" class="px-6 pb-5">
         <input type="hidden" name="options[prefix]" value="last">
         <input type="hidden" name="type" value="product">
+        <label for="search-drawer-input" class="sr-only">
+          {{ 'general.search.search' | t | default: 'Search' }}
+        </label>
         <div class="relative">
           <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
             {%- render 'icon', icon: 'search', class: 'w-5 h-5' -%}
           </span>
           <input
+            id="search-drawer-input"
             type="search"
             name="q"
             class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-[var(--color-border)] rounded-lg text-sm placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all"

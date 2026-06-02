@@ -1,5 +1,4 @@
 :root {
-    --page-width: 1440px;
     --line-height-body: 1.6;
     --line-height-heading: 1.2;
     --line-height-button: 1.5;
@@ -50,12 +49,14 @@ h1, h2, h3, h4, h5, h6,
     margin: 0;
 }
 
-.h1 { font-size: clamp(1.75rem, 3.5vw, 2.5rem); }
-.h2 { font-size: clamp(1.5rem, 2.75vw, 2rem); }
-.h3 { font-size: clamp(1.25rem, 2vw, 1.625rem); }
-.h4 { font-size: 1.25rem; }
-.h5 { font-size: 1.125rem; }
-.h6 { font-size: 1rem; }
+/* Heading sizes scale from --heading-base-size (settings → Typography).
+   Each step is a fraction of the base, with vw-aware fluid scaling. */
+.h1 { font-size: clamp(calc(var(--heading-base-size, 32px) * var(--heading-mobile-scale, 0.7)), 3.5vw, var(--heading-base-size, 32px)); }
+.h2 { font-size: clamp(calc(var(--heading-base-size, 32px) * 0.6), 2.75vw, calc(var(--heading-base-size, 32px) * 0.8)); }
+.h3 { font-size: clamp(calc(var(--heading-base-size, 32px) * 0.5), 2vw, calc(var(--heading-base-size, 32px) * 0.65)); }
+.h4 { font-size: calc(var(--heading-base-size, 32px) * 0.55); }
+.h5 { font-size: calc(var(--heading-base-size, 32px) * 0.45); }
+.h6 { font-size: calc(var(--heading-base-size, 32px) * 0.4); }
 
 p {
     line-height: var(--line-height-body);
@@ -261,8 +262,9 @@ summary::-webkit-details-marker {
     background-color: var(--button-bg);
     color: var(--button-text);
     border: var(--button-border-width) solid var(--button-border);
+    border-radius: var(--button-radius, 9999px);
 
-    @apply flex items-center justify-center gap-2 rounded-full;
+    @apply flex items-center justify-center gap-2;
 }
 
 .btn:hover {

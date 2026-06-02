@@ -22,7 +22,9 @@
         image_2400: image,
         widths: '600, 900, 1200, 1800, 2400',
         sizes: '100vw',
-        class: 'img-fit'
+        class: 'img-fit',
+        section_index: section.index,
+        lazy_load: false
       %}
     {%- else -%}
       <div class="absolute inset-0 bg-gray-100 flex items-center justify-center">

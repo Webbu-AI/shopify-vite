@@ -96,9 +96,9 @@
             {% if current_variant.available == false %}disabled{% endif %}
           >
             {%- if current_variant.available -%}
-              Add to cart
+              {{ 'products.product.add_to_cart' | t }}
             {%- else -%}
-              Sold out
+              {{ 'products.product.sold_out' | t }}
             {%- endif -%}
           </button>
 
@@ -118,7 +118,11 @@
 
       {%- if section.settings.show_share -%}
         <div class="mt-8 pt-6 border-t border-[var(--color-border)]">
-          <p class="text-sm">Share: <a href="{{ shop.url }}{{ product.url }}" class="link">link</a></p>
+          <p class="text-sm">
+            <a href="{{ shop.url }}{{ product.url }}" class="link">
+              {{ 'products.product.share' | t | default: 'Share' }}
+            </a>
+          </p>
         </div>
       {%- endif -%}
     </div>

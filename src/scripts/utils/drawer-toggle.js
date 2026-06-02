@@ -34,8 +34,9 @@ function getToggleName(el) {
     return null;
 }
 
-function openDrawer(drawer) {
+function openDrawer(drawer, trigger) {
     if (!drawer || drawer.hasAttribute('open')) return;
+    drawer._trigger = trigger || document.activeElement;
     drawer.setAttribute('open', '');
     document.body.classList.add('overflow-hidden');
     const scrollTarget = drawer.querySelector('.overflow-y-auto') || drawer;
@@ -52,15 +53,17 @@ function closeDrawer(drawer) {
         document.body.classList.remove('overflow-hidden');
     }
     drawer.dispatchEvent(new CustomEvent('drawer:close', { bubbles: true }));
+    drawer._trigger?.focus?.();
+    drawer._trigger = null;
 }
 
-function toggleDrawer(drawer) {
+function toggleDrawer(drawer, trigger) {
     if (!drawer) return;
-    drawer.hasAttribute('open') ? closeDrawer(drawer) : openDrawer(drawer);
+    drawer.hasAttribute('open') ? closeDrawer(drawer) : openDrawer(drawer, trigger);
 }
 
 document.addEventListener('click', (event) => {
-    const toggleEl = event.target.closest('[data-toggle-menu], [data-toggle-cart], [data-toggle-search]');
+    const toggleEl = event.target.closest('button, a, [data-toggle-menu], [data-toggle-cart], [data-toggle-search]');
     if (!toggleEl) return;
 
     const name = getToggleName(toggleEl);
@@ -70,7 +73,7 @@ document.addEventListener('click', (event) => {
     if (!drawer) return;
 
     event.preventDefault();
-    toggleDrawer(drawer);
+    toggleDrawer(drawer, toggleEl);
 });
 
 document.addEventListener('keyup', (event) => {

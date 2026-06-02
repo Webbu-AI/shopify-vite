@@ -1,4 +1,4 @@
-import { initLazyImages } from '../utils/lazy-images.js';
+import { initLazyImages } from '../utils/helpers/lazy-media.js';
 import { initLazyScript } from '../utils/theme-functions.js';
 
 const CONSTANTS = {

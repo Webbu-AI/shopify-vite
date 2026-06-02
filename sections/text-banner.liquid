@@ -1,13 +1,11 @@
 {%- liquid
-  assign bg_color = section.settings.background_color
-  assign text_color = section.settings.text_color
+  assign bg_color = section.settings.background_color | default: 'transparent'
+  assign text_color = section.settings.text_color | default: 'currentColor'
 -%}
 
 <div
-  class="text-banner py-16 md:py-24"
-  {% if bg_color != blank or text_color != blank %}
-    style="{% if bg_color != blank %}background-color: {{ bg_color }};{% endif %}{% if text_color != blank %} color: {{ text_color }};{% endif %}"
-  {% endif %}
+  class="text-banner py-16 md:py-24 bg-[var(--bg)] text-[var(--text)]"
+  style="--bg: {{ bg_color }}; --text: {{ text_color }};"
 >
   <div class="page-width max-w-3xl mx-auto text-center">
     {%- if section.settings.subheading != blank -%}

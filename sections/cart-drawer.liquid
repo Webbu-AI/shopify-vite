@@ -1,8 +1,14 @@
-<cart-drawer class="drawer" data-toggle-attribute="data-toggle-cart">
+<cart-drawer
+  class="drawer"
+  data-toggle-attribute="data-toggle-cart"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="cart-drawer-heading"
+>
   <div class="h-full grid grid-rows-[auto_1fr_auto]">
     {%- comment -%} Header {%- endcomment -%}
     <div class="flex justify-between items-center px-6 py-5 border-b border-[var(--color-border)]">
-      <h2 class="text-lg font-medium">
+      <h2 id="cart-drawer-heading" class="text-lg font-medium">
         {{ 'cart.title' | t | default: 'Your cart' }}
         <span class="text-gray-500 font-normal" data-cart-count-title>({{ cart.item_count }})</span>
       </h2>
