@@ -1,9 +1,26 @@
 {
   "sections": {
+    "image-banner": {
+      "type": "image-banner",
+      "settings": {
+        "subheading": "New collection",
+        "heading": "Welcome to the store",
+        "text": "<p>A clean, fast Shopify theme starter. Replace this banner with your hero image and intro copy.</p>",
+        "button_label": "Shop the collection",
+        "button_link": "/collections/frontpage",
+        "button_style": "btn--primary",
+        "height": "min-h-[420px] md:min-h-[520px]",
+        "overlay_opacity": 40,
+        "content_color": "#ffffff",
+        "text_align": "text-left",
+        "content_position": "items-center"
+      }
+    },
     "featured-collection": {
       "type": "featured-collection",
       "settings": {
         "title": "Featured",
+        "collection": "frontpage",
         "products_shown": 8,
         "columns": "md:grid-cols-4",
         "show_view_all": true
@@ -33,6 +50,7 @@
     }
   },
   "order": [
+    "image-banner",
     "featured-collection",
     "collection-list",
     "text-banner"
