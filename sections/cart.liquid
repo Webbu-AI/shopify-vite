@@ -1,7 +1,7 @@
 <div class="page-width py-8 md:py-12">
-  <h1 class="h2 mb-8">{{ 'cart.title' | t | default: 'Your cart' }}</h1>
-
   {%- if cart.item_count > 0 -%}
+    <h1 class="h2 mb-8">{{ 'cart.title' | t | default: 'Your cart' }}</h1>
+
     <form action="{{ routes.cart_url }}" method="post" novalidate class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
       <div class="space-y-4">
         {%- for item in cart.items -%}
@@ -72,7 +72,8 @@
       </aside>
     </form>
   {%- else -%}
-    <div class="py-16 text-center max-w-md mx-auto">
+    <div class="py-16 md:py-24 text-center max-w-md mx-auto">
+      <h1 class="h2 mb-4">{{ 'cart.title' | t | default: 'Your cart' }}</h1>
       <p class="text-gray-600 mb-8">{{ 'cart.empty' | t | default: 'Your cart is empty.' }}</p>
       <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary inline-flex">
         {{ 'cart.continue_browsing' | t | default: 'Continue shopping' }}

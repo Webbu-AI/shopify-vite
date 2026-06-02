@@ -1,68 +1,125 @@
-{% comment %}
-  This section is used in the article template to render the article page, which
-  displays the full content of the blog post and can optionally include a
-  comments section for customers (not shown in this example).
+<article class="page-width py-8 md:py-12 max-w-3xl">
+  <header class="mb-8">
+    {%- if section.settings.show_date -%}
+      <p class="text-xs uppercase tracking-widest text-gray-600 mb-3">
+        {{ article.published_at | time_tag: format: 'date' }}
+        {%- if section.settings.show_author -%}
+          <span class="mx-2">·</span>{{ article.author }}
+        {%- endif -%}
+      </p>
+    {%- endif -%}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/article
-{% endcomment %}
+    <h1 class="h1 mb-4">{{ article.title }}</h1>
+  </header>
 
-{% if article.image %}
-  {{ article.image | image_url: width: 1000 | image_tag }}
-{% endif %}
+  {%- if article.image -%}
+    <div class="media pb-[56%] bg-gray-50 rounded-lg mb-8 overflow-hidden">
+      {% render 'image',
+        image: article.image,
+        src_width: 1600,
+        widths: '600, 900, 1200, 1600',
+        sizes: '(min-width: 768px) 720px, 100vw',
+        class: 'img-fit'
+      %}
+    </div>
+  {%- endif -%}
 
-<h1>{{ article.title }}</h1>
-
-{% assign date = article.published_at | time_tag: format: 'date' %}
-<p>{{ 'blog.article_metadata_html' | t: date: date, author: article.author }}</p>
-
-{{ article.content }}
-
-{% if blog.comments_enabled? %}
-  <h2>{{ 'blog.article_comments' | t }}</h2>
-
-  <div id="comments">
-    {% paginate article.comments by 10 %}
-      {% for comment in article.comments %}
-        <div>
-          <p>{{ comment.author }}</p>
-          <p>
-            {{- comment.created_at | time_tag: format: 'date' -}}
-          </p>
-          <p>{{ comment.content }}</p>
-        </div>
-      {% endfor %}
-
-      {{ paginate | default_pagination: anchor: 'comments' }}
-    {% endpaginate %}
+  <div class="rte prose max-w-none">
+    {{ article.content }}
   </div>
 
-  {% form 'new_comment', article %}
-    <h2>{{ 'blog.comment_form_title' | t }}</h2>
+  {%- if blog.comments_enabled? -%}
+    <section class="mt-16 pt-8 border-t border-[var(--color-border)]">
+      <h2 class="h3 mb-6">{{ 'blog.article_comments' | t }}</h2>
 
-    {{ form.errors | default_errors }}
+      {%- paginate article.comments by 10 -%}
+        {%- if article.comments.size > 0 -%}
+          <div class="space-y-6 mb-10" id="comments">
+            {%- for comment in article.comments -%}
+              <div class="p-4 border border-[var(--color-border)] rounded-lg">
+                <p class="font-medium">{{ comment.author }}</p>
+                <p class="text-xs text-gray-600 mb-2">{{ comment.created_at | time_tag: format: 'date' }}</p>
+                <div class="rte">{{ comment.content }}</div>
+              </div>
+            {%- endfor -%}
+          </div>
 
-    <div>
-      <label for="author">{{ 'blog.comment_form_name' | t }}</label>
-      <input type="text" name="comment[author]" id="author" value="{{ form.author }}" required>
-    </div>
+          {%- if paginate.pages > 1 -%}
+            <div class="mb-10">{{ paginate | default_pagination: anchor: 'comments' }}</div>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endpaginate -%}
 
-    <div>
-      <label for="email">{{ 'blog.comment_form_email' | t }}</label>
-      <input type="email" name="comment[email]" id="email" value="{{ form.email }}" required>
-    </div>
+      {%- form 'new_comment', article -%}
+        <h3 class="h4 mb-4">{{ 'blog.comment_form_title' | t }}</h3>
 
-    <div>
-      <label for="body">{{ 'blog.comment_form_body' | t }}</label>
-      <textarea name="comment[body]" id="body" required>{{ form.body }}</textarea>
-    </div>
+        {{ form.errors | default_errors }}
 
-    <input type="submit" value="{{ 'blog.comment_form_submit' | t }}">
-  {% endform %}
-{% endif %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label for="author" class="block text-sm mb-1">{{ 'blog.comment_form_name' | t }}</label>
+            <input
+              type="text"
+              name="comment[author]"
+              id="author"
+              value="{{ form.author }}"
+              required
+              class="w-full border border-[var(--color-border)] rounded px-3 py-2"
+            >
+          </div>
+          <div>
+            <label for="email" class="block text-sm mb-1">{{ 'blog.comment_form_email' | t }}</label>
+            <input
+              type="email"
+              name="comment[email]"
+              id="email"
+              value="{{ form.email }}"
+              required
+              class="w-full border border-[var(--color-border)] rounded px-3 py-2"
+            >
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="body" class="block text-sm mb-1">{{ 'blog.comment_form_body' | t }}</label>
+          <textarea
+            name="comment[body]"
+            id="body"
+            required
+            rows="5"
+            class="w-full border border-[var(--color-border)] rounded px-3 py-2"
+          >{{ form.body }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn--primary">
+          {{ 'blog.comment_form_submit' | t }}
+        </button>
+      {%- endform -%}
+    </section>
+  {%- endif -%}
+</article>
 
 {% schema %}
 {
-  "name": "t:general.article",
-  "settings": []
+  "name": "Article",
+  "tag": "section",
+  "enabled_on": {
+    "templates": ["article"]
+  },
+  "limit": 1,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show author",
+      "default": false
+    }
+  ]
 }
 {% endschema %}
