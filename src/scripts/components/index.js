@@ -13,5 +13,6 @@ import './infinite-collection.js';
 import './flickity-responsive.js';
 import './cart-drawer.js';
 import './search-drawer.js';
+import './menu-drawer.js';
 
 import './product/';

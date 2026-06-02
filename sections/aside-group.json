@@ -2,6 +2,10 @@
   "type": "aside",
   "name": "Aside",
   "sections": {
+    "menu-drawer": {
+      "type": "menu-drawer",
+      "settings": {}
+    },
     "cart-drawer": {
       "type": "cart-drawer",
       "settings": {}
@@ -12,6 +16,7 @@
     }
   },
   "order": [
+    "menu-drawer",
     "cart-drawer",
     "search-drawer"
   ]
